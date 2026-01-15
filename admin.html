@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Manager</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <h1>Portfolio Manager</h1>
+            <div class="header-actions">
+                <a href="index.html" class="btn-view-site" target="_blank">View Site</a>
+                <button class="btn-save-all" onclick="saveAllData()">Save All Changes</button>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('projects')">Projects</button>
+            <button class="tab-btn" onclick="switchTab('gallery')">Gallery</button>
+            <button class="tab-btn" onclick="switchTab('about')">About & Skills</button>
+            <button class="tab-btn" onclick="switchTab('contact')">Contact Info</button>
+            <button class="tab-btn" onclick="switchTab('hero')">Hero Section</button>
+        </div>
+
+        <!-- Projects Tab -->
+        <div id="projects-tab" class="tab-content active">
+            <div class="section-header">
+                <h2>Manage Projects</h2>
+                <button class="btn-add" onclick="addNewProject()">+ Add Project</button>
+            </div>
+            
+            <div class="projects-list" id="projects-list">
+                <!-- Projects will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Gallery Tab -->
+        <div id="gallery-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Manage Gallery</h2>
+                <div>
+                    <button class="btn-add" onclick="addNewSection()" style="margin-right: 0.5rem;">+ Add Section</button>
+                    <button class="btn-add" onclick="addNewGalleryItem()">+ Add Image</button>
+                </div>
+            </div>
+            
+            <div id="gallery-sections-container">
+                <!-- Gallery sections will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div id="about-tab" class="tab-content">
+            <div class="section-header">
+                <h2>About Section</h2>
+            </div>
+            <div class="form-section">
+                <label>About Text (Paragraph 1)</label>
+                <textarea id="about-text-1" rows="3" placeholder="Enter your first paragraph about yourself..."></textarea>
+                
+                <label>About Text (Paragraph 2)</label>
+                <textarea id="about-text-2" rows="3" placeholder="Enter your second paragraph..."></textarea>
+            </div>
+
+            <div class="section-header">
+                <h2>Skills</h2>
+                <button class="btn-add" onclick="addSkill()">+ Add Skill</button>
+            </div>
+            <div class="skills-list" id="skills-list">
+                <!-- Skills will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Contact Tab -->
+        <div id="contact-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Contact Information</h2>
+            </div>
+            <div class="form-section">
+                <label>Email</label>
+                <input type="email" id="contact-email" placeholder="your.email@example.com">
+                
+                <label>Phone</label>
+                <input type="tel" id="contact-phone" placeholder="+1 (234) 567-890">
+                
+                <label>LinkedIn URL</label>
+                <input type="url" id="contact-linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                
+                <label>GitHub URL</label>
+                <input type="url" id="contact-github" placeholder="https://github.com/yourusername">
+                
+                <label>Twitter/X URL</label>
+                <input type="url" id="contact-twitter" placeholder="https://twitter.com/yourusername">
+            </div>
+        </div>
+
+        <!-- Hero Tab -->
+        <div id="hero-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Hero Section</h2>
+            </div>
+            <div class="form-section">
+                <label>Your Name</label>
+                <input type="text" id="hero-name" placeholder="Your Name">
+                
+                <label>Subtitle</label>
+                <input type="text" id="hero-subtitle" placeholder="Full Stack Developer | UX/UI Designer">
+                
+                <label>Description</label>
+                <textarea id="hero-description" rows="3" placeholder="I create exceptional digital experiences..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Project</h2>
+                <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Project Name *</label>
+                    <input type="text" id="project-name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="project-description" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Thumbnail Image URL</label>
+                    <input type="url" id="project-thumbnail" placeholder="project1-thumbnail.jpg or full URL">
+                    <small>Use local filename (e.g., project1.jpg) or full URL. If left empty and YouTube URL is provided, YouTube thumbnail will be used automatically.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>YouTube Video URL</label>
+                    <input type="url" id="project-youtube" placeholder="https://www.youtube.com/watch?v=...">
+                    <small>Paste full YouTube URL - video will be embedded in project card. If no thumbnail is provided, YouTube thumbnail will be used automatically.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Technologies (comma-separated)</label>
+                    <input type="text" id="project-tech" placeholder="React, Node.js, MongoDB">
+                </div>
+                
+                <div class="form-group">
+                    <label>Project URL</label>
+                    <input type="url" id="project-url" placeholder="https://yourproject.com">
+                </div>
+                
+                <div class="form-group">
+                    <label>Source Code URL</label>
+                    <input type="url" id="project-source" placeholder="https://github.com/yourusername/project">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeProjectModal()">Cancel</button>
+                <button class="btn-save" onclick="saveProject()">Save Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="gallery-modal-title">Add Gallery Image</h2>
+                <button class="modal-close" onclick="closeGalleryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Image or GIF *</label>
+                    <input type="file" id="gallery-image-input" accept="image/*,.gif" onchange="handleImageUpload(event)">
+                    <small>Upload an image file (JPG, PNG, GIF, etc.)</small>
+                    <div id="gallery-image-preview" style="margin-top: 1rem; display: none;">
+                        <img id="gallery-preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Or Image URL</label>
+                    <input type="url" id="gallery-image-url" placeholder="https://example.com/image.jpg">
+                    <small>Alternatively, provide an image URL</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="gallery-description" rows="3" placeholder="Describe this image..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Title (optional)</label>
+                    <input type="text" id="gallery-title" placeholder="Image title">
+                </div>
+                
+                <div class="form-group">
+                    <label>Section/Category *</label>
+                    <select id="gallery-section" required>
+                        <option value="">Select a section...</option>
+                    </select>
+                    <small>Choose which section this image belongs to</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeGalleryModal()">Cancel</button>
+                <button class="btn-save" onclick="saveGalleryItem()">Save Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Modal -->
+    <div id="section-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="section-modal-title">Add Section</h2>
+                <button class="modal-close" onclick="closeSectionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Section Name *</label>
+                    <input type="text" id="section-name" placeholder="e.g., Nature, Portraits, Events" required>
+                    <small>Name your gallery section/category</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeSectionModal()">Cancel</button>
+                <button class="btn-save" onclick="saveSection()">Save Section</button>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
