@@ -151,13 +151,65 @@ window.addEventListener('load', () => {
 
 // ========== DYNAMIC CONTENT LOADING ==========
 
+// Load data from JSON file if localStorage is empty
+async function loadDataFromFile() {
+    try {
+        const response = await fetch('data.json');
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Only load from file if localStorage is empty
+            if (!localStorage.getItem('portfolio_projects') || localStorage.getItem('portfolio_projects') === '[]') {
+                if (data.projects && data.projects.length > 0) {
+                    localStorage.setItem('portfolio_projects', JSON.stringify(data.projects));
+                }
+            }
+            
+            if (!localStorage.getItem('portfolio_gallery') || localStorage.getItem('portfolio_gallery') === '{"sections":[]}') {
+                if (data.gallery) {
+                    localStorage.setItem('portfolio_gallery', JSON.stringify(data.gallery));
+                }
+            }
+            
+            if (!localStorage.getItem('portfolio_about') || localStorage.getItem('portfolio_about') === '{"text1":"","text2":""}') {
+                if (data.about) {
+                    localStorage.setItem('portfolio_about', JSON.stringify(data.about));
+                }
+            }
+            
+            if (!localStorage.getItem('portfolio_skills') || localStorage.getItem('portfolio_skills') === '[]') {
+                if (data.skills && data.skills.length > 0) {
+                    localStorage.setItem('portfolio_skills', JSON.stringify(data.skills));
+                }
+            }
+            
+            if (!localStorage.getItem('portfolio_contact')) {
+                if (data.contact) {
+                    localStorage.setItem('portfolio_contact', JSON.stringify(data.contact));
+                }
+            }
+            
+            if (!localStorage.getItem('portfolio_hero')) {
+                if (data.hero) {
+                    localStorage.setItem('portfolio_hero', JSON.stringify(data.hero));
+                }
+            }
+        }
+    } catch (error) {
+        console.log('Could not load data.json, using localStorage only:', error);
+    }
+}
+
 function loadDynamicContent() {
-    loadProjects();
-    loadGallery();
-    loadAbout();
-    loadSkills();
-    loadHero();
-    loadContact();
+    // First try to load from file, then load from localStorage
+    loadDataFromFile().then(() => {
+        loadProjects();
+        loadGallery();
+        loadAbout();
+        loadSkills();
+        loadHero();
+        loadContact();
+    });
 }
 
 // Load Projects from localStorage

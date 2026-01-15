@@ -1,0 +1,23 @@
+{
+  "projects": [],
+  "gallery": {
+    "sections": []
+  },
+  "about": {
+    "text1": "",
+    "text2": ""
+  },
+  "skills": [],
+  "contact": {
+    "email": "elad1488@gmail.com",
+    "phone": "+972 502337704",
+    "linkedin": "",
+    "github": "",
+    "twitter": ""
+  },
+  "hero": {
+    "name": "Elad Giladi",
+    "subtitle": "Aerospace Engineer | Roboticist | Comedian",
+    "description": "I create exceptional digital experiences with attention to detail"
+  }
+}

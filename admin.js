@@ -1264,6 +1264,68 @@ function saveAllData() {
     showSuccess('All changes saved successfully!');
 }
 
+// Export all data to JSON (for updating data.json file)
+function exportAllData() {
+    const data = {
+        projects: JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]'),
+        gallery: JSON.parse(localStorage.getItem(STORAGE_KEYS.GALLERY) || '{"sections":[]}'),
+        about: JSON.parse(localStorage.getItem(STORAGE_KEYS.ABOUT) || '{"text1":"","text2":""}'),
+        skills: JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]'),
+        contact: JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT) || '{}'),
+        hero: JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO) || '{}')
+    };
+    
+    const jsonString = JSON.stringify(data, null, 2);
+    
+    // Create download link
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'data.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showSuccess('Data exported! Copy the contents of data.json to your repository and commit it.');
+}
+
+// Import data from JSON file
+async function importDataFromFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+            
+            if (data.projects) localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(data.projects));
+            if (data.gallery) localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(data.gallery));
+            if (data.about) localStorage.setItem(STORAGE_KEYS.ABOUT, JSON.stringify(data.about));
+            if (data.skills) localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(data.skills));
+            if (data.contact) localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(data.contact));
+            if (data.hero) localStorage.setItem(STORAGE_KEYS.HERO, JSON.stringify(data.hero));
+            
+            // Reload all data
+            loadAllData();
+            loadGallery();
+            loadProjects();
+            
+            showSuccess('Data imported successfully!');
+        } catch (error) {
+            alert('Error importing data: ' + error.message);
+        }
+    };
+    
+    input.click();
+}
+
 // ========== UTILITY ==========
 
 function showSuccess(message) {
