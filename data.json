@@ -1,5 +1,78 @@
 {
-  "projects": [],
+  "projects": [
+    {
+      "name": "Wheeled SPOT Trajectory DEMO | NVIDIA Isaac Sim & Isaac Lab",
+      "description": "In this video I demonstrate a wheeled Spot-style robot inspired by Boston Dynamics Spot that I trained using NVIDIA Isaac Sim and Isaac Lab to autonomously complete a route defined by five waypoints.\n\nThe robot uses reinforcement learning for low-level motion and stability, combined with a high-level navigation controller that sends target XY positions to the policy. By sequentially reaching each waypoint, the robot is able to follow a full path through the environment, demonstrating reliable goal-directed navigation.\n\nThis setup shows how learned locomotion policies can be combined with waypoint-based high-level control to produce structured, repeatable robot behavior suitable for real-world navigation tasks.\n\nAll training and evaluation were performed in NVIDIA Isaac Sim and Isaac Lab, using physics-based simulation and reinforcement learning to achieve stable and precise movement.",
+      "thumbnail": "https://www.youtube.com/watch?v=xGYHr0L9lss&feature=youtu.be",
+      "youtubeUrl": "xGYHr0L9lss",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "Vulcan-Inspired Auto-Targeting System",
+      "description": "This video presents a small but powerful proof of concept demonstrating real-time visual target tracking using a PixyCam and a pair of pan-tilt servos for azimuth and elevation control.\n\nThe camera is configured to lock onto objects based on color. Once a target is detected, its position in the image is continuously translated into servo commands that keep the target centered in the camera’s field of view. In this demonstration, the system tracks an orange, a yellow apple, and a clementine, with the active target switching dynamically based on the selected color.\n\nThe same tracking commands are also sent to a second pair of servos, which mirror the camera’s motion and drive a 3D-printed Vulcan-style turret (used here purely for illustration). As the camera follows the target, the turret moves accordingly, visually showing how vision-based tracking can be mechanically coupled to a physical platform.\n\nThis project demonstrates how much can be achieved with very low-cost hardware using simple computer vision and control logic.\n\nIn a real operational system, additional calibration would be required — including accounting for the known offset between the camera and the actuator, as well as the distance to the target — in order to compute accurate aiming and alignment. However, this proof of concept clearly demonstrates the core idea: visual detection → tracking → physical actuation.\n\nThe ability to switch between different colors of interest also highlights a more general principle: the system can be extended beyond color to track targets based on arbitrary user-defined criteria, allowing a human or higher-level AI to dynamically classify objects as “interesting” or “uninteresting” and switch focus between them in real time.\n\nThis makes the project a compelling demonstration of low-cost, real-time visual servoing and target selection.",
+      "thumbnail": "https://www.youtube.com/watch?v=3Prc-wleP6I&feature=youtu.be",
+      "youtubeUrl": "3Prc-wleP6I",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "Wheeled SPOT Trajectory DEMO | NVIDIA Isaac Sim & Isaac Lab",
+      "description": "In this video I demonstrate a wheeled Spot-style robot inspired by Boston Dynamics Spot that I trained using NVIDIA Isaac Sim and Isaac Lab to autonomously complete a route defined by five waypoints.\n\nThe robot uses reinforcement learning for low-level motion and stability, combined with a high-level navigation controller that sends target XY positions to the policy. By sequentially reaching each waypoint, the robot is able to follow a full path through the environment, demonstrating reliable goal-directed navigation.\n\nThis setup shows how learned locomotion policies can be combined with waypoint-based high-level control to produce structured, repeatable robot behavior suitable for real-world navigation tasks.\n\nAll training and evaluation were performed in NVIDIA Isaac Sim and Isaac Lab, using physics-based simulation and reinforcement learning to achieve stable and precise movement.",
+      "thumbnail": "https://www.youtube.com/watch?v=Odg2IOA6sdo",
+      "youtubeUrl": "Odg2IOA6sdo",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "Wheeled SPOT follows ball DEMO | Nvidia Isaac Sim & Isaac Lab",
+      "description": "In this video I demonstrate how I trained a Spot-style quadruped robot using NVIDIA Isaac Sim and Isaac Lab with a curriculum-based reinforcement learning pipeline.\n\nThe robot was trained progressively, starting from basic stability and balance, then learning to drive forward and backward, rotate in place, and finally respond to high-level navigation commands.\nOn top of the low-level locomotion policy, I added a high-level controller that commands the robot to move to target XY positions and chase a moving ball in real time.\n\nThis layered control approach allows the robot to combine learned locomotion with goal-directed navigation, enabling complex autonomous behaviors such as waypoint tracking and dynamic target pursuit.\n\nThe project is inspired by NVIDIA’s Isaac Lab examples and workflows, adapted and extended for a Spot-like robot.\n\n🎥 Reference material and original Isaac Lab demo:\n   • Isaac Lab: Custom Environment Training. A ...",
+      "thumbnail": "https://www.youtube.com/watch?v=fRjI1ClDW6k",
+      "youtubeUrl": "fRjI1ClDW6k",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "Standing Still → Driving Forward | NVIDIA Isaac Sim & Isaac Lab",
+      "description": "In this video I showcase a wheeled Spot robot (Boston Dynamics Spot ) that I trained using NVIDIA Isaac Sim and Isaac Lab with reinforcement learning.\n\nThe robot was trained through a curriculum to learn multiple low-level behaviors, including:\n\nStanding stably in place\n\nDriving forward on its wheels\n\nEach of these behaviors was learned as a separate policy. On top of that, I implemented a high-level controller that dynamically switches between these learned policies in real time. This allows the robot to transition smoothly between standing and driving forward based on the task it needs to perform.\n\nThis demonstrates a key capability of modern robot learning systems: composing multiple learned skills into a single high-level controller, enabling more complex and flexible autonomous behavior than any single policy could achieve alone.\n\nAll training and evaluation were performed inside NVIDIA Isaac Sim and Isaac Lab, using physics-based simulation and reinforcement learning to produce stable, transferable robot behaviors.",
+      "thumbnail": "https://www.youtube.com/watch?v=OYZcEDcnmxA&feature=youtu.be",
+      "youtubeUrl": "OYZcEDcnmxA",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "CoppeliaSim: Two-link planar manipulator, Inverse Kinematics",
+      "description": "In this video, I present the results of my work after following the fantastic tutorial by Pranav Bhounsule on controlling a 2-link manipulator using forward kinematics. A huge thank you to Pranav for his clear and insightful guidance in his tutorials, which have been incredibly helpful for exploring robotics and kinematic control concepts.\n\nThis video showcases the implementation of the techniques demonstrated in the tutorial, including trajectory planning, Jacobian-based control, and smooth actuation of a robotic manipulator.\n\nIf you're interested in robotics or looking to learn about forward kinematics and control systems, I highly recommend checking out Pranav Bhounsule's original tutorial here:    • CoppeliaSim: Two-link planar manipulator, ...  .\n\nKey Features in This Video:\n\nForward kinematics implementation for a 2-link manipulator.\nReal-time trajectory tracking and end-effector motion.\nInsights from hands-on application of tutorial concepts.\nThank you for watching! If you enjoyed this video or found it helpful, consider liking, sharing, and subscribing for more robotics-related content.",
+      "thumbnail": "https://www.youtube.com/watch?v=-pjkOZW3r6c",
+      "youtubeUrl": "-pjkOZW3r6c",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "Controlling a 2-Link Manipulator with Forward Kinematics | Pranav's Tutorial Results",
+      "description": "In this video, I present my results from following Pranav's detailed tutorial on controlling a 2-link manipulator using Forward Kinematics. The tutorial provided a clear and practical approach to understanding and implementing kinematic control for robotic systems.\n\nA huge shoutout to Pranav's Channel for the exceptional guidance that made this project both educational and rewarding.\n\nWatch as I demonstrate the implementation and the smooth motion control of the 2-link manipulator. If you're exploring robotics, forward kinematics, or simply enjoy seeing robotic arms in action, this is for you!\n\nTutorial link: [   • CoppeliaSim: Two-link planar manipulator, ...  ]\nTools used: CoppeliaSim Edu, CoppeliaSim API and Python\n\nDon't forget to check out Pranav's original tutorial, and if you found this video helpful or inspiring, consider liking, sharing, and subscribing for more content. Let's keep learning and building together!",
+      "thumbnail": "https://www.youtube.com/watch?v=XHsLB7GmPYQ&feature=youtu.be",
+      "youtubeUrl": "XHsLB7GmPYQ",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "זדעדעי",
+      "description": "דככעדריד",
+      "thumbnail": "https://www.youtube.com/watch?v=XHsLB7GmPYQ&feature=youtu.be",
+      "youtubeUrl": "XHsLB7GmPYQ",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    }
+  ],
   "gallery": {
     "sections": []
   },
@@ -10,10 +83,7 @@
   "skills": [],
   "contact": {
     "email": "elad1488@gmail.com",
-    "phone": "+972 502337704",
-    "linkedin": "",
-    "github": "",
-    "twitter": ""
+    "phone": "+972 502337704"
   },
   "hero": {
     "name": "Elad Giladi",

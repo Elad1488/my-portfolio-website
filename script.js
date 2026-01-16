@@ -164,37 +164,48 @@ async function loadDataFromFile() {
             // localStorage takes priority if it exists (user-edited content)
             // This way, data added via admin panel is preserved
             
-            // For projects: localStorage ALWAYS takes priority (user can add via admin)
-            // Only use data.json if localStorage is completely empty or doesn't exist
-            const storedProjects = localStorage.getItem('portfolio_projects');
-            if (storedProjects) {
-                try {
-                    const parsed = JSON.parse(storedProjects);
-                    // Use localStorage if it has any projects OR if it's explicitly set (even if empty array)
-                    // This preserves user's choice to have empty projects list
-                    siteData.projects = parsed;
-                } catch (e) {
-                    console.error('Error parsing projects from localStorage:', e);
-                    // If localStorage is corrupted, fall back to data.json
-                    if (siteData.projects && siteData.projects.length > 0) {
-                        localStorage.setItem('portfolio_projects', JSON.stringify(siteData.projects));
-                    }
-                }
-            } else if (siteData.projects && siteData.projects.length > 0) {
-                // Only use data.json if localStorage doesn't exist at all
-                localStorage.setItem('portfolio_projects', JSON.stringify(siteData.projects));
+            // data.json is the PRIMARY source for live site (shared across all visitors)
+            // localStorage is only used as fallback if data.json is empty or missing
+            // This allows admin to edit via localStorage, then export to update data.json
+            if (siteData.projects && siteData.projects.length > 0) {
+                // Use data.json if it has projects - this is what visitors see on live site
+                // Don't overwrite with localStorage - data.json is the source of truth for public site
             } else {
-                // Initialize empty array if nothing exists
-                siteData.projects = siteData.projects || [];
+                // Fallback to localStorage only if data.json is empty
+                const storedProjects = localStorage.getItem('portfolio_projects');
+                if (storedProjects) {
+                    try {
+                        const parsed = JSON.parse(storedProjects);
+                        if (parsed && parsed.length > 0) {
+                            siteData.projects = parsed;
+                        } else {
+                            siteData.projects = [];
+                        }
+                    } catch (e) {
+                        console.error('Error parsing projects from localStorage:', e);
+                        siteData.projects = [];
+                    }
+                } else {
+                    siteData.projects = [];
+                }
             }
             
-            // For gallery: localStorage takes priority (user can add via admin)
-            const storedGallery = localStorage.getItem('portfolio_gallery');
-            if (storedGallery && storedGallery !== '{"sections":[]}') {
-                siteData.gallery = JSON.parse(storedGallery);
-            } else if (siteData.gallery && (siteData.gallery.sections?.length > 0 || Object.keys(siteData.gallery).length > 1)) {
-                // Use data.json only if localStorage is empty
-                localStorage.setItem('portfolio_gallery', JSON.stringify(siteData.gallery));
+            // data.json is the PRIMARY source for live site
+            // localStorage is only used as fallback if data.json is empty
+            if (siteData.gallery && (siteData.gallery.sections?.length > 0 || Object.keys(siteData.gallery).length > 1)) {
+                // Use data.json if it has gallery data
+            } else {
+                // Fallback to localStorage only if data.json is empty
+                const storedGallery = localStorage.getItem('portfolio_gallery');
+                if (storedGallery && storedGallery !== '{"sections":[]}') {
+                    try {
+                        siteData.gallery = JSON.parse(storedGallery);
+                    } catch (e) {
+                        siteData.gallery = { sections: [] };
+                    }
+                } else {
+                    siteData.gallery = { sections: [] };
+                }
             }
             
             // For about: localStorage takes priority (user can edit via admin)
@@ -521,19 +532,9 @@ function createProjectCard(project) {
 
 // Load About Section
 function loadAbout() {
-    // ALWAYS check localStorage first - it contains user-edited content from admin panel
-    let about;
-    const storedAbout = localStorage.getItem('portfolio_about');
-    if (storedAbout) {
-        try {
-            about = JSON.parse(storedAbout);
-        } catch (e) {
-            console.error('Error parsing about from localStorage:', e);
-            about = siteData?.about || { text1: "", text2: "" };
-        }
-    } else {
-        about = siteData?.about || { text1: "", text2: "" };
-    }
+    // Use siteData.about (from data.json) as PRIMARY source for live site
+    // localStorage is only fallback if data.json is empty
+    const about = siteData?.about || { text1: "", text2: "" };
     
     const aboutText = document.getElementById('about-text');
     
@@ -554,19 +555,9 @@ function loadAbout() {
 
 // Load Skills
 function loadSkills() {
-    // ALWAYS check localStorage first - it contains user-edited content from admin panel
-    let skills;
-    const storedSkills = localStorage.getItem('portfolio_skills');
-    if (storedSkills) {
-        try {
-            skills = JSON.parse(storedSkills);
-        } catch (e) {
-            console.error('Error parsing skills from localStorage:', e);
-            skills = siteData?.skills || [];
-        }
-    } else {
-        skills = siteData?.skills || [];
-    }
+    // Use siteData.skills (from data.json) as PRIMARY source for live site
+    // localStorage is only fallback if data.json is empty
+    const skills = siteData?.skills || [];
     
     const skillsGrid = document.getElementById('skills-grid');
     
@@ -593,19 +584,9 @@ function loadSkills() {
 
 // Load Hero Section
 function loadHero() {
-    // siteData.hero (from data.json) is ALWAYS used if it exists
-    // localStorage is ONLY used as fallback if siteData.hero doesn't exist
-    let hero = null;
-    
-    if (siteData && siteData.hero && (siteData.hero.name || siteData.hero.subtitle || siteData.hero.description)) {
-        // Use data.json hero - this is the source of truth
-        hero = siteData.hero;
-        console.log('Using hero from data.json:', hero);
-    } else {
-        // Fallback to localStorage only if data.json doesn't have hero
-        hero = JSON.parse(localStorage.getItem('portfolio_hero') || '{}');
-        console.log('Using hero from localStorage (fallback):', hero);
-    }
+    // Use siteData.hero (from data.json) as PRIMARY source for live site
+    // localStorage is only fallback if data.json is empty
+    let hero = siteData?.hero || {};
     
     if (hero && hero.name) {
         const nameElement = document.getElementById('hero-name');
@@ -636,21 +617,10 @@ function loadHero() {
 
 // Load Gallery Section
 function loadGallery() {
-    // ALWAYS check localStorage first - it contains user-edited content from admin panel
-    // Only use siteData.gallery if localStorage is empty
-    let galleryData;
-    const storedGallery = localStorage.getItem('portfolio_gallery');
-    if (storedGallery) {
-        try {
-            galleryData = JSON.parse(storedGallery);
-        } catch (e) {
-            console.error('Error parsing gallery from localStorage:', e);
-            galleryData = siteData?.gallery || { sections: [] };
-        }
-    } else {
-        // localStorage is empty, use siteData (from data.json) as fallback
-        galleryData = siteData?.gallery || { sections: [] };
-    }
+    // Use siteData.gallery (from data.json) as PRIMARY source for live site
+    // localStorage is only fallback if data.json is empty
+    // Admin can edit via localStorage, then export to update data.json for all visitors
+    const galleryData = siteData?.gallery || { sections: [] };
     
     const galleryGrid = document.getElementById('gallery-grid');
     
@@ -815,19 +785,9 @@ function closeGalleryLightbox() {
 
 // Load Contact Section
 function loadContact() {
-    // ALWAYS check localStorage first - it contains user-edited content from admin panel
-    let contact;
-    const storedContact = localStorage.getItem('portfolio_contact');
-    if (storedContact) {
-        try {
-            contact = JSON.parse(storedContact);
-        } catch (e) {
-            console.error('Error parsing contact from localStorage:', e);
-            contact = siteData?.contact || {};
-        }
-    } else {
-        contact = siteData?.contact || {};
-    }
+    // Use siteData.contact (from data.json) as PRIMARY source for live site
+    // localStorage is only fallback if data.json is empty
+    let contact = siteData?.contact || {};
     
     // Set default contact info if not set
     if (!contact.email) {
