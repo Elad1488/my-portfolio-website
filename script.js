@@ -164,13 +164,28 @@ async function loadDataFromFile() {
             // localStorage takes priority if it exists (user-edited content)
             // This way, data added via admin panel is preserved
             
-            // For projects: localStorage takes priority (user can add via admin)
+            // For projects: localStorage ALWAYS takes priority (user can add via admin)
+            // Only use data.json if localStorage is completely empty or doesn't exist
             const storedProjects = localStorage.getItem('portfolio_projects');
-            if (storedProjects && storedProjects !== '[]') {
-                siteData.projects = JSON.parse(storedProjects);
+            if (storedProjects) {
+                try {
+                    const parsed = JSON.parse(storedProjects);
+                    // Use localStorage if it has any projects OR if it's explicitly set (even if empty array)
+                    // This preserves user's choice to have empty projects list
+                    siteData.projects = parsed;
+                } catch (e) {
+                    console.error('Error parsing projects from localStorage:', e);
+                    // If localStorage is corrupted, fall back to data.json
+                    if (siteData.projects && siteData.projects.length > 0) {
+                        localStorage.setItem('portfolio_projects', JSON.stringify(siteData.projects));
+                    }
+                }
             } else if (siteData.projects && siteData.projects.length > 0) {
-                // Use data.json only if localStorage is empty
+                // Only use data.json if localStorage doesn't exist at all
                 localStorage.setItem('portfolio_projects', JSON.stringify(siteData.projects));
+            } else {
+                // Initialize empty array if nothing exists
+                siteData.projects = siteData.projects || [];
             }
             
             // For gallery: localStorage takes priority (user can add via admin)
@@ -247,7 +262,22 @@ function loadDynamicContent() {
 
 // Load Projects from localStorage or siteData
 function loadProjects() {
-    const projects = siteData?.projects || JSON.parse(localStorage.getItem('portfolio_projects') || '[]');
+    // ALWAYS check localStorage first - it contains user-edited content from admin panel
+    // Only use siteData.projects if localStorage is empty
+    let projects;
+    const storedProjects = localStorage.getItem('portfolio_projects');
+    if (storedProjects) {
+        try {
+            projects = JSON.parse(storedProjects);
+        } catch (e) {
+            console.error('Error parsing projects from localStorage:', e);
+            projects = siteData?.projects || [];
+        }
+    } else {
+        // localStorage is empty, use siteData (from data.json) as fallback
+        projects = siteData?.projects || [];
+    }
+    
     const projectsGrid = document.getElementById('projects-grid');
     
     if (projects.length === 0) {
@@ -491,7 +521,20 @@ function createProjectCard(project) {
 
 // Load About Section
 function loadAbout() {
-    const about = siteData?.about || JSON.parse(localStorage.getItem('portfolio_about') || '{"text1": "", "text2": ""}');
+    // ALWAYS check localStorage first - it contains user-edited content from admin panel
+    let about;
+    const storedAbout = localStorage.getItem('portfolio_about');
+    if (storedAbout) {
+        try {
+            about = JSON.parse(storedAbout);
+        } catch (e) {
+            console.error('Error parsing about from localStorage:', e);
+            about = siteData?.about || { text1: "", text2: "" };
+        }
+    } else {
+        about = siteData?.about || { text1: "", text2: "" };
+    }
+    
     const aboutText = document.getElementById('about-text');
     
     let html = '';
@@ -511,7 +554,20 @@ function loadAbout() {
 
 // Load Skills
 function loadSkills() {
-    const skills = siteData?.skills || JSON.parse(localStorage.getItem('portfolio_skills') || '[]');
+    // ALWAYS check localStorage first - it contains user-edited content from admin panel
+    let skills;
+    const storedSkills = localStorage.getItem('portfolio_skills');
+    if (storedSkills) {
+        try {
+            skills = JSON.parse(storedSkills);
+        } catch (e) {
+            console.error('Error parsing skills from localStorage:', e);
+            skills = siteData?.skills || [];
+        }
+    } else {
+        skills = siteData?.skills || [];
+    }
+    
     const skillsGrid = document.getElementById('skills-grid');
     
     if (skills.length === 0) {
@@ -580,7 +636,22 @@ function loadHero() {
 
 // Load Gallery Section
 function loadGallery() {
-    const galleryData = siteData?.gallery || JSON.parse(localStorage.getItem('portfolio_gallery') || '{"sections":[]}');
+    // ALWAYS check localStorage first - it contains user-edited content from admin panel
+    // Only use siteData.gallery if localStorage is empty
+    let galleryData;
+    const storedGallery = localStorage.getItem('portfolio_gallery');
+    if (storedGallery) {
+        try {
+            galleryData = JSON.parse(storedGallery);
+        } catch (e) {
+            console.error('Error parsing gallery from localStorage:', e);
+            galleryData = siteData?.gallery || { sections: [] };
+        }
+    } else {
+        // localStorage is empty, use siteData (from data.json) as fallback
+        galleryData = siteData?.gallery || { sections: [] };
+    }
+    
     const galleryGrid = document.getElementById('gallery-grid');
     
     // Migrate old format if needed
@@ -744,8 +815,21 @@ function closeGalleryLightbox() {
 
 // Load Contact Section
 function loadContact() {
+    // ALWAYS check localStorage first - it contains user-edited content from admin panel
+    let contact;
+    const storedContact = localStorage.getItem('portfolio_contact');
+    if (storedContact) {
+        try {
+            contact = JSON.parse(storedContact);
+        } catch (e) {
+            console.error('Error parsing contact from localStorage:', e);
+            contact = siteData?.contact || {};
+        }
+    } else {
+        contact = siteData?.contact || {};
+    }
+    
     // Set default contact info if not set
-    let contact = siteData?.contact || JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
     if (!contact.email) {
         contact.email = 'elad1488@gmail.com';
         contact.phone = '+972 502337704';
