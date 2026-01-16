@@ -151,52 +151,82 @@ window.addEventListener('load', () => {
 
 // ========== DYNAMIC CONTENT LOADING ==========
 
-// Load data from JSON file if localStorage is empty
+// Load data from JSON file - data.json is the primary source, localStorage is only used as fallback
+let siteData = null;
+
 async function loadDataFromFile() {
     try {
         const response = await fetch('data.json');
         if (response.ok) {
-            const data = await response.json();
+            siteData = await response.json();
             
-            // Only load from file if localStorage is empty
-            if (!localStorage.getItem('portfolio_projects') || localStorage.getItem('portfolio_projects') === '[]') {
-                if (data.projects && data.projects.length > 0) {
-                    localStorage.setItem('portfolio_projects', JSON.stringify(data.projects));
+            // data.json is the source of truth - always use it
+            // Only use localStorage as fallback if data.json doesn't have the data
+            
+            if (siteData.projects && siteData.projects.length > 0) {
+                // Use data.json projects
+            } else {
+                // Fallback to localStorage only if data.json is empty
+                const storedProjects = localStorage.getItem('portfolio_projects');
+                if (storedProjects && storedProjects !== '[]') {
+                    siteData.projects = JSON.parse(storedProjects);
                 }
             }
             
-            if (!localStorage.getItem('portfolio_gallery') || localStorage.getItem('portfolio_gallery') === '{"sections":[]}') {
-                if (data.gallery) {
-                    localStorage.setItem('portfolio_gallery', JSON.stringify(data.gallery));
+            if (siteData.gallery && (siteData.gallery.sections?.length > 0 || Object.keys(siteData.gallery).length > 1)) {
+                // Use data.json gallery
+            } else {
+                const storedGallery = localStorage.getItem('portfolio_gallery');
+                if (storedGallery && storedGallery !== '{"sections":[]}') {
+                    siteData.gallery = JSON.parse(storedGallery);
                 }
             }
             
-            if (!localStorage.getItem('portfolio_about') || localStorage.getItem('portfolio_about') === '{"text1":"","text2":""}') {
-                if (data.about) {
-                    localStorage.setItem('portfolio_about', JSON.stringify(data.about));
+            if (siteData.about && (siteData.about.text1 || siteData.about.text2)) {
+                // Use data.json about
+            } else {
+                const storedAbout = localStorage.getItem('portfolio_about');
+                if (storedAbout && storedAbout !== '{"text1":"","text2":""}') {
+                    siteData.about = JSON.parse(storedAbout);
                 }
             }
             
-            if (!localStorage.getItem('portfolio_skills') || localStorage.getItem('portfolio_skills') === '[]') {
-                if (data.skills && data.skills.length > 0) {
-                    localStorage.setItem('portfolio_skills', JSON.stringify(data.skills));
+            if (siteData.skills && siteData.skills.length > 0) {
+                // Use data.json skills
+            } else {
+                const storedSkills = localStorage.getItem('portfolio_skills');
+                if (storedSkills && storedSkills !== '[]') {
+                    siteData.skills = JSON.parse(storedSkills);
                 }
             }
             
-            if (!localStorage.getItem('portfolio_contact')) {
-                if (data.contact) {
-                    localStorage.setItem('portfolio_contact', JSON.stringify(data.contact));
+            // For contact and hero, always prefer data.json if it exists
+            if (siteData.contact && Object.keys(siteData.contact).length > 0) {
+                // Use data.json contact
+            } else {
+                const storedContact = localStorage.getItem('portfolio_contact');
+                if (storedContact && storedContact !== '{}') {
+                    siteData.contact = JSON.parse(storedContact);
                 }
             }
             
-            if (!localStorage.getItem('portfolio_hero')) {
-                if (data.hero) {
-                    localStorage.setItem('portfolio_hero', JSON.stringify(data.hero));
+            // Hero: data.json is ALWAYS the source of truth - NEVER override with localStorage
+            // If data.json has ANY hero data, use it and ignore localStorage completely
+            if (!siteData.hero || (!siteData.hero.name && !siteData.hero.subtitle && !siteData.hero.description)) {
+                // Only use localStorage if data.json is completely empty
+                const storedHero = localStorage.getItem('portfolio_hero');
+                if (storedHero && storedHero !== '{}') {
+                    const parsedHero = JSON.parse(storedHero);
+                    if (parsedHero.name || parsedHero.subtitle || parsedHero.description) {
+                        siteData.hero = parsedHero;
+                    }
                 }
             }
+            // If siteData.hero exists from data.json (even partially), localStorage is IGNORED
         }
     } catch (error) {
         console.log('Could not load data.json, using localStorage only:', error);
+        siteData = null;
     }
 }
 
@@ -212,9 +242,9 @@ function loadDynamicContent() {
     });
 }
 
-// Load Projects from localStorage
+// Load Projects from localStorage or siteData
 function loadProjects() {
-    const projects = JSON.parse(localStorage.getItem('portfolio_projects') || '[]');
+    const projects = siteData?.projects || JSON.parse(localStorage.getItem('portfolio_projects') || '[]');
     const projectsGrid = document.getElementById('projects-grid');
     
     if (projects.length === 0) {
@@ -458,7 +488,7 @@ function createProjectCard(project) {
 
 // Load About Section
 function loadAbout() {
-    const about = JSON.parse(localStorage.getItem('portfolio_about') || '{"text1": "", "text2": ""}');
+    const about = siteData?.about || JSON.parse(localStorage.getItem('portfolio_about') || '{"text1": "", "text2": ""}');
     const aboutText = document.getElementById('about-text');
     
     let html = '';
@@ -478,7 +508,7 @@ function loadAbout() {
 
 // Load Skills
 function loadSkills() {
-    const skills = JSON.parse(localStorage.getItem('portfolio_skills') || '[]');
+    const skills = siteData?.skills || JSON.parse(localStorage.getItem('portfolio_skills') || '[]');
     const skillsGrid = document.getElementById('skills-grid');
     
     if (skills.length === 0) {
@@ -504,27 +534,42 @@ function loadSkills() {
 
 // Load Hero Section
 function loadHero() {
-    const hero = JSON.parse(localStorage.getItem('portfolio_hero') || '{}');
+    // siteData.hero (from data.json) is ALWAYS used if it exists
+    // localStorage is ONLY used as fallback if siteData.hero doesn't exist
+    let hero = null;
     
-    if (hero.name) {
+    if (siteData && siteData.hero && (siteData.hero.name || siteData.hero.subtitle || siteData.hero.description)) {
+        // Use data.json hero - this is the source of truth
+        hero = siteData.hero;
+        console.log('Using hero from data.json:', hero);
+    } else {
+        // Fallback to localStorage only if data.json doesn't have hero
+        hero = JSON.parse(localStorage.getItem('portfolio_hero') || '{}');
+        console.log('Using hero from localStorage (fallback):', hero);
+    }
+    
+    if (hero && hero.name) {
         const nameElement = document.getElementById('hero-name');
         if (nameElement) nameElement.textContent = hero.name;
     }
     
-    if (hero.subtitle) {
+    if (hero && hero.subtitle) {
         const subtitleElement = document.getElementById('hero-subtitle');
-        if (subtitleElement) subtitleElement.textContent = hero.subtitle;
+        if (subtitleElement) {
+            subtitleElement.textContent = hero.subtitle;
+            console.log('Set subtitle to:', hero.subtitle);
+        }
     }
     
-    if (hero.description) {
+    if (hero && hero.description) {
         const descElement = document.getElementById('hero-description');
         if (descElement) descElement.textContent = hero.description;
     }
     
-    // Update Contact Me button with email from localStorage
+    // Update Contact Me button with email
     const contactMeBtn = document.getElementById('contact-me-btn');
     if (contactMeBtn) {
-        const contact = JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
+        const contact = siteData?.contact || JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
         const email = contact.email || 'elad1488@gmail.com';
         contactMeBtn.href = `mailto:${email}`;
     }
@@ -532,7 +577,7 @@ function loadHero() {
 
 // Load Gallery Section
 function loadGallery() {
-    const galleryData = JSON.parse(localStorage.getItem('portfolio_gallery') || '{"sections":[]}');
+    const galleryData = siteData?.gallery || JSON.parse(localStorage.getItem('portfolio_gallery') || '{"sections":[]}');
     const galleryGrid = document.getElementById('gallery-grid');
     
     // Migrate old format if needed
@@ -697,7 +742,7 @@ function closeGalleryLightbox() {
 // Load Contact Section
 function loadContact() {
     // Set default contact info if not set
-    let contact = JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
+    let contact = siteData?.contact || JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
     if (!contact.email) {
         contact.email = 'elad1488@gmail.com';
         contact.phone = '+972 502337704';
