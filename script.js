@@ -163,10 +163,6 @@ async function loadDataFromFile() {
             // data.json is the source of truth - always use it
             // Only use localStorage as fallback if data.json doesn't have the data
             
-            // Clear localStorage AFTER loading to ensure data.json is always the source of truth
-            // This prevents old localStorage data from overriding data.json on subsequent loads
-            // We clear it after checking what we need, so we can still use it as fallback if needed
-            
             if (siteData.projects && siteData.projects.length > 0) {
                 // Use data.json projects
             } else {
@@ -228,19 +224,24 @@ async function loadDataFromFile() {
             }
             // If siteData.hero exists from data.json (even partially), localStorage is IGNORED
             
-            // Clear localStorage to ensure data.json is always the source of truth
-            // This prevents old localStorage data from overriding data.json
-            // This runs automatically on every page load
-            localStorage.removeItem('portfolio_hero');
-            localStorage.removeItem('portfolio_projects');
-            localStorage.removeItem('portfolio_gallery');
-            localStorage.removeItem('portfolio_about');
-            localStorage.removeItem('portfolio_skills');
-            localStorage.removeItem('portfolio_contact');
+            // Clear localStorage ONLY on live site (http/https), NOT on local file (file://)
+            // On local file, fetch might fail due to CORS, so we need localStorage as fallback
+            const isLocalFile = window.location.protocol === 'file:';
+            if (!isLocalFile) {
+                // On live site, clear localStorage to ensure data.json is always the source of truth
+                // This prevents old localStorage data from overriding data.json
+                localStorage.removeItem('portfolio_hero');
+                localStorage.removeItem('portfolio_projects');
+                localStorage.removeItem('portfolio_gallery');
+                localStorage.removeItem('portfolio_about');
+                localStorage.removeItem('portfolio_skills');
+                localStorage.removeItem('portfolio_contact');
+            }
         }
     } catch (error) {
         console.log('Could not load data.json, using localStorage only:', error);
         siteData = null;
+        // Don't clear localStorage if data.json failed to load - we need it as fallback
     }
 }
 
