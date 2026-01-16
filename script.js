@@ -160,83 +160,71 @@ async function loadDataFromFile() {
         if (response.ok) {
             siteData = await response.json();
             
-            // data.json is the source of truth - always use it
-            // Only use localStorage as fallback if data.json doesn't have the data
+            // data.json provides default/initial data
+            // localStorage takes priority if it exists (user-edited content)
+            // This way, data added via admin panel is preserved
             
-            if (siteData.projects && siteData.projects.length > 0) {
-                // Use data.json projects
-            } else {
-                // Fallback to localStorage only if data.json is empty
-                const storedProjects = localStorage.getItem('portfolio_projects');
-                if (storedProjects && storedProjects !== '[]') {
-                    siteData.projects = JSON.parse(storedProjects);
+            // For projects: localStorage takes priority (user can add via admin)
+            const storedProjects = localStorage.getItem('portfolio_projects');
+            if (storedProjects && storedProjects !== '[]') {
+                siteData.projects = JSON.parse(storedProjects);
+            } else if (siteData.projects && siteData.projects.length > 0) {
+                // Use data.json only if localStorage is empty
+                localStorage.setItem('portfolio_projects', JSON.stringify(siteData.projects));
+            }
+            
+            // For gallery: localStorage takes priority (user can add via admin)
+            const storedGallery = localStorage.getItem('portfolio_gallery');
+            if (storedGallery && storedGallery !== '{"sections":[]}') {
+                siteData.gallery = JSON.parse(storedGallery);
+            } else if (siteData.gallery && (siteData.gallery.sections?.length > 0 || Object.keys(siteData.gallery).length > 1)) {
+                // Use data.json only if localStorage is empty
+                localStorage.setItem('portfolio_gallery', JSON.stringify(siteData.gallery));
+            }
+            
+            // For about: localStorage takes priority (user can edit via admin)
+            const storedAbout = localStorage.getItem('portfolio_about');
+            if (storedAbout && storedAbout !== '{"text1":"","text2":""}') {
+                siteData.about = JSON.parse(storedAbout);
+            } else if (siteData.about && (siteData.about.text1 || siteData.about.text2)) {
+                // Use data.json only if localStorage is empty
+                localStorage.setItem('portfolio_about', JSON.stringify(siteData.about));
+            }
+            
+            // For skills: localStorage takes priority (user can add via admin)
+            const storedSkills = localStorage.getItem('portfolio_skills');
+            if (storedSkills && storedSkills !== '[]') {
+                siteData.skills = JSON.parse(storedSkills);
+            } else if (siteData.skills && siteData.skills.length > 0) {
+                // Use data.json only if localStorage is empty
+                localStorage.setItem('portfolio_skills', JSON.stringify(siteData.skills));
+            }
+            
+            // For contact: localStorage takes priority (user can edit via admin)
+            const storedContact = localStorage.getItem('portfolio_contact');
+            if (storedContact && storedContact !== '{}') {
+                siteData.contact = JSON.parse(storedContact);
+            } else if (siteData.contact && Object.keys(siteData.contact).length > 0) {
+                // Use data.json only if localStorage is empty
+                localStorage.setItem('portfolio_contact', JSON.stringify(siteData.contact));
+            }
+            
+            // For hero: localStorage takes priority (user can edit via admin)
+            // data.json is only used as default if localStorage is empty
+            const storedHero = localStorage.getItem('portfolio_hero');
+            if (storedHero && storedHero !== '{}') {
+                const parsedHero = JSON.parse(storedHero);
+                if (parsedHero.name || parsedHero.subtitle || parsedHero.description) {
+                    siteData.hero = parsedHero;
                 }
+            } else if (siteData.hero && (siteData.hero.name || siteData.hero.subtitle || siteData.hero.description)) {
+                // Use data.json only if localStorage is empty
+                localStorage.setItem('portfolio_hero', JSON.stringify(siteData.hero));
             }
             
-            if (siteData.gallery && (siteData.gallery.sections?.length > 0 || Object.keys(siteData.gallery).length > 1)) {
-                // Use data.json gallery
-            } else {
-                const storedGallery = localStorage.getItem('portfolio_gallery');
-                if (storedGallery && storedGallery !== '{"sections":[]}') {
-                    siteData.gallery = JSON.parse(storedGallery);
-                }
-            }
-            
-            if (siteData.about && (siteData.about.text1 || siteData.about.text2)) {
-                // Use data.json about
-            } else {
-                const storedAbout = localStorage.getItem('portfolio_about');
-                if (storedAbout && storedAbout !== '{"text1":"","text2":""}') {
-                    siteData.about = JSON.parse(storedAbout);
-                }
-            }
-            
-            if (siteData.skills && siteData.skills.length > 0) {
-                // Use data.json skills
-            } else {
-                const storedSkills = localStorage.getItem('portfolio_skills');
-                if (storedSkills && storedSkills !== '[]') {
-                    siteData.skills = JSON.parse(storedSkills);
-                }
-            }
-            
-            // For contact and hero, always prefer data.json if it exists
-            if (siteData.contact && Object.keys(siteData.contact).length > 0) {
-                // Use data.json contact
-            } else {
-                const storedContact = localStorage.getItem('portfolio_contact');
-                if (storedContact && storedContact !== '{}') {
-                    siteData.contact = JSON.parse(storedContact);
-                }
-            }
-            
-            // Hero: data.json is ALWAYS the source of truth - NEVER override with localStorage
-            // If data.json has ANY hero data, use it and ignore localStorage completely
-            if (!siteData.hero || (!siteData.hero.name && !siteData.hero.subtitle && !siteData.hero.description)) {
-                // Only use localStorage if data.json is completely empty
-                const storedHero = localStorage.getItem('portfolio_hero');
-                if (storedHero && storedHero !== '{}') {
-                    const parsedHero = JSON.parse(storedHero);
-                    if (parsedHero.name || parsedHero.subtitle || parsedHero.description) {
-                        siteData.hero = parsedHero;
-                    }
-                }
-            }
-            // If siteData.hero exists from data.json (even partially), localStorage is IGNORED
-            
-            // Clear localStorage ONLY on live site (http/https), NOT on local file (file://)
-            // On local file, fetch might fail due to CORS, so we need localStorage as fallback
-            const isLocalFile = window.location.protocol === 'file:';
-            if (!isLocalFile) {
-                // On live site, clear localStorage to ensure data.json is always the source of truth
-                // This prevents old localStorage data from overriding data.json
-                localStorage.removeItem('portfolio_hero');
-                localStorage.removeItem('portfolio_projects');
-                localStorage.removeItem('portfolio_gallery');
-                localStorage.removeItem('portfolio_about');
-                localStorage.removeItem('portfolio_skills');
-                localStorage.removeItem('portfolio_contact');
-            }
+            // IMPORTANT: Don't clear localStorage on live site - users can edit content via admin panel
+            // localStorage stores user-edited content, data.json is only the initial/default data
+            // Only merge: use data.json values if localStorage is empty, otherwise keep localStorage
         }
     } catch (error) {
         console.log('Could not load data.json, using localStorage only:', error);
