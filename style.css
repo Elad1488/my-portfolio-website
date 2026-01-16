@@ -328,6 +328,14 @@ section {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 0.4rem !important;
     }
+    
+    .youtube-play-overlay {
+        transform: translate(-50%, -50%) scale(0.33) !important;
+    }
+    
+    .project-thumbnail-link:hover .youtube-play-overlay {
+        transform: translate(-50%, -50%) scale(0.36) !important;
+    }
 }
 
 /* Mobile: 3 columns - moved to main responsive section */
@@ -937,6 +945,14 @@ section {
     .project-links a {
         font-size: 0.6rem !important;
         padding: 0.15rem 0.3rem !important;
+    }
+    
+    .youtube-play-overlay {
+        transform: translate(-50%, -50%) scale(0.33) !important;
+    }
+    
+    .project-thumbnail-link:hover .youtube-play-overlay {
+        transform: translate(-50%, -50%) scale(0.36) !important;
     }
 
     .section-title {
