@@ -159,10 +159,8 @@ async function loadDataFromFile() {
         const response = await fetch('data.json');
         if (response.ok) {
             siteData = await response.json();
-            
-            // data.json provides default/initial data
-            // localStorage takes priority if it exists (user-edited content)
-            // This way, data added via admin panel is preserved
+            console.log('✅ Loaded data.json successfully:', siteData);
+            console.log('Projects count:', siteData.projects?.length || 0);
             
             // data.json is the PRIMARY source for live site (shared across all visitors)
             // localStorage is only used as fallback if data.json is empty or missing
@@ -170,16 +168,20 @@ async function loadDataFromFile() {
             if (siteData.projects && siteData.projects.length > 0) {
                 // Use data.json if it has projects - this is what visitors see on live site
                 // Don't overwrite with localStorage - data.json is the source of truth for public site
+                console.log('Using projects from data.json:', siteData.projects.length);
             } else {
                 // Fallback to localStorage only if data.json is empty
+                console.log('data.json has no projects, checking localStorage...');
                 const storedProjects = localStorage.getItem('portfolio_projects');
                 if (storedProjects) {
                     try {
                         const parsed = JSON.parse(storedProjects);
                         if (parsed && parsed.length > 0) {
                             siteData.projects = parsed;
+                            console.log('Using projects from localStorage (fallback):', parsed.length);
                         } else {
                             siteData.projects = [];
+                            console.log('localStorage projects array is empty');
                         }
                     } catch (e) {
                         console.error('Error parsing projects from localStorage:', e);
@@ -187,6 +189,7 @@ async function loadDataFromFile() {
                     }
                 } else {
                     siteData.projects = [];
+                    console.log('No projects in localStorage either');
                 }
             }
             
@@ -253,43 +256,51 @@ async function loadDataFromFile() {
             // Only merge: use data.json values if localStorage is empty, otherwise keep localStorage
         }
     } catch (error) {
-        console.log('Could not load data.json, using localStorage only:', error);
-        siteData = null;
-        // Don't clear localStorage if data.json failed to load - we need it as fallback
+        console.error('❌ Could not load data.json, using localStorage only:', error);
+        // Fallback to localStorage if data.json fails
+        siteData = {
+            projects: JSON.parse(localStorage.getItem('portfolio_projects') || '[]'),
+            gallery: JSON.parse(localStorage.getItem('portfolio_gallery') || '{"sections":[]}'),
+            about: JSON.parse(localStorage.getItem('portfolio_about') || '{"text1":"","text2":""}'),
+            skills: JSON.parse(localStorage.getItem('portfolio_skills') || '[]'),
+            contact: JSON.parse(localStorage.getItem('portfolio_contact') || '{}'),
+            hero: JSON.parse(localStorage.getItem('portfolio_hero') || '{}')
+        };
+        console.log('Using localStorage as fallback, projects count:', siteData.projects?.length || 0);
     }
 }
 
-function loadDynamicContent() {
+async function loadDynamicContent() {
     // First try to load from file, then load from localStorage
-    loadDataFromFile().then(() => {
-        loadProjects();
-        loadGallery();
-        loadAbout();
-        loadSkills();
-        loadHero();
-        loadContact();
-    });
+    await loadDataFromFile();
+    console.log('siteData after loadDataFromFile:', siteData);
+    console.log('Projects in siteData:', siteData?.projects?.length || 0);
+    
+    // Now load all sections
+    loadProjects();
+    loadGallery();
+    loadAbout();
+    loadSkills();
+    loadHero();
+    loadContact();
 }
 
-// Load Projects from localStorage or siteData
+// Load Projects from siteData (data.json is primary source)
 function loadProjects() {
-    // ALWAYS check localStorage first - it contains user-edited content from admin panel
-    // Only use siteData.projects if localStorage is empty
-    let projects;
-    const storedProjects = localStorage.getItem('portfolio_projects');
-    if (storedProjects) {
-        try {
-            projects = JSON.parse(storedProjects);
-        } catch (e) {
-            console.error('Error parsing projects from localStorage:', e);
-            projects = siteData?.projects || [];
-        }
-    } else {
-        // localStorage is empty, use siteData (from data.json) as fallback
-        projects = siteData?.projects || [];
-    }
+    // Use siteData.projects (from data.json) as PRIMARY source for live site
+    // localStorage is only fallback if data.json is empty
+    // Admin can edit via localStorage, then export to update data.json for all visitors
+    const projects = siteData?.projects || [];
+    
+    console.log('Loading projects:', projects.length, 'projects found');
+    console.log('siteData:', siteData);
     
     const projectsGrid = document.getElementById('projects-grid');
+    
+    if (!projectsGrid) {
+        console.error('Projects grid element not found!');
+        return;
+    }
     
     if (projects.length === 0) {
         projectsGrid.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">No projects yet. Use the admin panel to add projects!</p>';
