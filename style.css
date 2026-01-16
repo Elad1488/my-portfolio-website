@@ -315,6 +315,23 @@ section {
     gap: 2rem;
 }
 
+/* Force 3 columns on mobile - override minmax */
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .projects-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.4rem !important;
+    }
+}
+
+/* Mobile: 3 columns - moved to main responsive section */
+
 .project-card {
     background: white;
     border-radius: 12px;
@@ -868,31 +885,58 @@ section {
 
     .projects-grid {
         grid-template-columns: repeat(3, 1fr) !important;
-        gap: 0.75rem;
+        gap: 0.5rem !important;
+        min-width: 0 !important;
     }
     
     .project-card {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
     }
     
     .project-content {
-        padding: 0.75rem;
+        padding: 0.5rem !important;
     }
     
     .project-content h3 {
-        font-size: 0.9rem;
-        margin-bottom: 0.25rem;
+        font-size: 0.75rem !important;
+        margin-bottom: 0.2rem !important;
+        line-height: 1.2 !important;
     }
     
     .project-image {
-        height: 120px;
+        height: 90px !important;
     }
     
     .project-summary {
-        font-size: 0.75rem;
-        line-height: 1.3;
+        font-size: 0.65rem !important;
+        line-height: 1.2 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+    
+    .project-tech {
+        font-size: 0.6rem !important;
+        margin-top: 0.2rem !important;
+    }
+    
+    .project-tech span {
+        padding: 0.1rem 0.3rem !important;
+        font-size: 0.55rem !important;
+    }
+    
+    .project-links {
+        margin-top: 0.2rem !important;
+        gap: 0.2rem !important;
+    }
+    
+    .project-links a {
+        font-size: 0.6rem !important;
+        padding: 0.15rem 0.3rem !important;
     }
 
     .section-title {
