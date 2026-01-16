@@ -233,7 +233,7 @@ function saveProject() {
     localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
     loadProjects();
     closeProjectModal();
-    showSuccess('Project saved successfully!');
+    showSuccess('✅ Project saved successfully! Remember to export data.json to update the live site.');
 }
 
 function deleteProject(index) {
@@ -640,6 +640,7 @@ function saveAbout() {
         text2: document.getElementById('about-text-2').value
     };
     localStorage.setItem(STORAGE_KEYS.ABOUT, JSON.stringify(about));
+    // Note: User needs to export data.json to update live site
 }
 
 function loadSkills() {
@@ -712,6 +713,7 @@ function saveContact() {
         twitter: document.getElementById('contact-twitter').value
     };
     localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(contact));
+    // Note: User needs to export data.json to update live site
 }
 
 // ========== HERO ==========
@@ -730,6 +732,7 @@ function saveHero() {
         description: document.getElementById('hero-description').value
     };
     localStorage.setItem(STORAGE_KEYS.HERO, JSON.stringify(hero));
+    // Note: User needs to export data.json to update live site
 }
 
 // ========== AUTO-SAVE ON CHANGE ==========
@@ -1126,7 +1129,7 @@ function saveGalleryItem() {
         
         loadGallery();
         closeGalleryModal();
-        showSuccess('Gallery image saved successfully!');
+        showSuccess('✅ Gallery image saved! Remember to export data.json to update the live site.');
     } catch (error) {
         console.error('Error saving gallery item:', error);
         if (error.name === 'QuotaExceededError' || error.message.includes('quota')) {
@@ -1261,7 +1264,7 @@ function saveAllData() {
     saveAbout();
     saveContact();
     saveHero();
-    showSuccess('All changes saved successfully!');
+    showSuccess('✅ All changes saved to localStorage! Click "Export Data" to update data.json for the live site.');
 }
 
 // Export all data to JSON (for updating data.json file)
@@ -1288,7 +1291,29 @@ function exportAllData() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    showSuccess('Data exported! Copy the contents of data.json to your repository and commit it.');
+    // Show detailed instructions
+    const instructions = `
+✅ הקובץ data.json הורד!
+
+📋 כדי שהשינויים יופיעו באתר האונליין:
+
+1. פתח את GitHub Desktop או את התיקייה המקומית שלך
+2. העתק את הקובץ data.json שהורדת לתיקייה:
+   C:\\myWebsite\\my-portfolio-website\\data.json
+   
+   (החלף את הקובץ הקיים)
+
+3. ב-GitHub Desktop:
+   - Commit את השינוי
+   - Push ל-GitHub
+   
+4. חכה 1-2 דקות - האתר יתעדכן אוטומטית!
+
+💡 טיפ: אחרי כל שינוי באדמין, ייצא את הנתונים כדי לשמור אותם ב-data.json
+    `;
+    
+    alert(instructions);
+    showSuccess('✅ הקובץ data.json הורד! עיין בהוראות איך להעלות אותו ל-GitHub.');
 }
 
 // Import data from JSON file
