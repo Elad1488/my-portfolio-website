@@ -213,6 +213,14 @@
                     </select>
                     <small>Choose which section this image belongs to</small>
                 </div>
+                
+                <div class="form-group">
+                    <label>Additional Images (Optional)</label>
+                    <small>Add multiple related images that will be shown in the gallery lightbox when clicking the main image</small>
+                    <div id="additional-images-list" style="margin-top: 0.5rem;"></div>
+                    <button type="button" class="btn-add-secondary" onclick="addAdditionalImageInput()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #f0f0f0; border: 1px dashed #ccc; border-radius: 4px; cursor: pointer;">+ Add Additional Image</button>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">You can add multiple images (URLs or upload files). The first image is the main thumbnail shown in the gallery grid.</small>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-cancel" onclick="closeGalleryModal()">Cancel</button>

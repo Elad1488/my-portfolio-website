@@ -720,8 +720,34 @@ function createGalleryItem(item) {
     return div;
 }
 
-// Gallery lightbox functionality
+// Gallery lightbox functionality with multiple images support
+let currentLightboxImages = [];
+let currentLightboxIndex = 0;
+
 function openGalleryLightbox(item) {
+    // Build array of all images: main image + additional images
+    currentLightboxImages = [];
+    
+    // Add main image first
+    const mainImageSrc = item.imageUrl || item.imageBase64 || '';
+    if (mainImageSrc) {
+        currentLightboxImages.push(mainImageSrc);
+    }
+    
+    // Add additional images
+    if (item.additionalImages && Array.isArray(item.additionalImages)) {
+        item.additionalImages.forEach(additionalImg => {
+            const imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
+            if (imgSrc) {
+                currentLightboxImages.push(imgSrc);
+            }
+        });
+    }
+    
+    if (currentLightboxImages.length === 0) return;
+    
+    currentLightboxIndex = 0;
+    
     // Create lightbox if it doesn't exist
     let lightbox = document.getElementById('gallery-lightbox');
     if (!lightbox) {
@@ -731,10 +757,15 @@ function openGalleryLightbox(item) {
         lightbox.innerHTML = `
             <div class="lightbox-content">
                 <button class="lightbox-close" aria-label="Close">&times;</button>
-                <img class="lightbox-image" src="" alt="">
+                <button class="lightbox-nav lightbox-prev" aria-label="Previous image">&#8249;</button>
+                <button class="lightbox-nav lightbox-next" aria-label="Next image">&#8250;</button>
+                <div class="lightbox-image-container">
+                    <img class="lightbox-image" src="" alt="">
+                </div>
                 <div class="lightbox-info">
                     <h3 class="lightbox-title"></h3>
                     <p class="lightbox-description"></p>
+                    <div class="lightbox-dots"></div>
                 </div>
             </div>
         `;
@@ -743,6 +774,17 @@ function openGalleryLightbox(item) {
         // Close on button click
         lightbox.querySelector('.lightbox-close').addEventListener('click', closeGalleryLightbox);
         
+        // Navigation buttons
+        lightbox.querySelector('.lightbox-prev').addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateLightbox(-1);
+        });
+        
+        lightbox.querySelector('.lightbox-next').addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateLightbox(1);
+        });
+        
         // Close on background click
         lightbox.addEventListener('click', (e) => {
             if (e.target === lightbox) {
@@ -750,22 +792,56 @@ function openGalleryLightbox(item) {
             }
         });
         
-        // Close on Escape key
+        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'Escape') {
                 closeGalleryLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                navigateLightbox(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateLightbox(1);
             }
         });
     }
     
-    // Populate lightbox with item data
-    const imageSrc = item.imageUrl || item.imageBase64 || '';
-    const img = lightbox.querySelector('.lightbox-image');
-    const title = lightbox.querySelector('.lightbox-title');
-    const description = lightbox.querySelector('.lightbox-description');
+    // Update lightbox content
+    updateLightboxContent(item);
     
-    img.src = imageSrc;
-    img.alt = item.title || 'Gallery image';
+    // Show lightbox
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function navigateLightbox(direction) {
+    if (currentLightboxImages.length <= 1) return;
+    
+    currentLightboxIndex += direction;
+    
+    if (currentLightboxIndex < 0) {
+        currentLightboxIndex = currentLightboxImages.length - 1;
+    } else if (currentLightboxIndex >= currentLightboxImages.length) {
+        currentLightboxIndex = 0;
+    }
+    
+    const img = document.querySelector('.lightbox-image');
+    if (img) {
+        img.src = currentLightboxImages[currentLightboxIndex];
+    }
+    
+    updateLightboxDots();
+}
+
+function updateLightboxContent(item) {
+    const img = document.querySelector('.lightbox-image');
+    const title = document.querySelector('.lightbox-title');
+    const description = document.querySelector('.lightbox-description');
+    
+    if (img && currentLightboxImages.length > 0) {
+        img.src = currentLightboxImages[currentLightboxIndex];
+        img.alt = item.title || 'Gallery image';
+    }
     
     if (item.title) {
         title.textContent = item.title;
@@ -781,9 +857,51 @@ function openGalleryLightbox(item) {
         description.style.display = 'none';
     }
     
-    // Show lightbox
-    lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    // Show/hide navigation arrows based on number of images
+    const prevBtn = document.querySelector('.lightbox-prev');
+    const nextBtn = document.querySelector('.lightbox-next');
+    if (prevBtn && nextBtn) {
+        if (currentLightboxImages.length > 1) {
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+        } else {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+    }
+    
+    updateLightboxDots();
+}
+
+function updateLightboxDots() {
+    const dotsContainer = document.querySelector('.lightbox-dots');
+    if (!dotsContainer) return;
+    
+    dotsContainer.innerHTML = '';
+    
+    if (currentLightboxImages.length <= 1) {
+        dotsContainer.style.display = 'none';
+        return;
+    }
+    
+    dotsContainer.style.display = 'flex';
+    
+    currentLightboxImages.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.className = 'lightbox-dot';
+        if (index === currentLightboxIndex) {
+            dot.classList.add('active');
+        }
+        dot.addEventListener('click', () => {
+            currentLightboxIndex = index;
+            const img = document.querySelector('.lightbox-image');
+            if (img) {
+                img.src = currentLightboxImages[currentLightboxIndex];
+            }
+            updateLightboxDots();
+        });
+        dotsContainer.appendChild(dot);
+    });
 }
 
 function closeGalleryLightbox() {
