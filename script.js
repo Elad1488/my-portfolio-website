@@ -74,10 +74,17 @@ function activateNavLink() {
 window.addEventListener('scroll', activateNavLink);
 
 // Form Submission
+// Contact form handling with Web3Forms API
 const contactForm = document.querySelector('.contact-form');
+const contactFormMessage = document.getElementById('contact-form-message');
+const contactSubmitBtn = document.getElementById('contact-submit-btn');
+
+// Web3Forms Access Key - Get yours free at https://web3forms.com
+// Replace this with your own access key from web3forms.com
+const WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
 
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         // Get form values
@@ -90,23 +97,93 @@ if (contactForm) {
         const contact = JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
         const yourEmail = contact.email || 'elad1488@gmail.com';
         
-        // Create mailto link with subject and body
-        const subject = encodeURIComponent(`Portfolio Contact: ${name}`);
-        const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-        const mailtoLink = `mailto:${yourEmail}?subject=${subject}&body=${body}`;
+        // Disable submit button and show loading
+        if (contactSubmitBtn) {
+            contactSubmitBtn.disabled = true;
+            contactSubmitBtn.textContent = 'Sending...';
+        }
         
-        // Open email client
-        window.location.href = mailtoLink;
+        // Hide previous messages
+        if (contactFormMessage) {
+            contactFormMessage.style.display = 'none';
+        }
         
-        // Show confirmation
-        setTimeout(() => {
-            alert(`Thank you ${name}! Your email client should open. If it doesn't, please email me directly at ${yourEmail}`);
-        }, 500);
-        
-        // Reset form after a delay
-        setTimeout(() => {
-            contactForm.reset();
-        }, 1000);
+        try {
+            // Use Web3Forms API to send email (free service)
+            // If access key is not set, fallback to mailto
+            if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        access_key: WEB3FORMS_ACCESS_KEY,
+                        subject: `Portfolio Contact: ${name}`,
+                        from_name: name,
+                        from_email: email,
+                        message: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+                        to_email: yourEmail
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    if (contactFormMessage) {
+                        contactFormMessage.style.display = 'block';
+                        contactFormMessage.style.background = '#10b981';
+                        contactFormMessage.style.color = 'white';
+                        contactFormMessage.textContent = `✅ Thank you ${name}! Your message has been sent successfully. I'll get back to you soon!`;
+                        contactFormMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    
+                    // Reset form after a delay
+                    setTimeout(() => {
+                        contactForm.reset();
+                        if (contactSubmitBtn) {
+                            contactSubmitBtn.disabled = false;
+                            contactSubmitBtn.textContent = 'Send Message';
+                        }
+                    }, 2000);
+                    return;
+                } else {
+                    throw new Error(result.message || 'Failed to send message');
+                }
+            } else {
+                // Fallback to mailto if access key not configured
+                throw new Error('Web3Forms not configured');
+            }
+            
+        } catch (error) {
+            console.error('Error sending message:', error);
+            
+            // Fallback to mailto if API fails or not configured
+            const subject = encodeURIComponent(`Portfolio Contact: ${name}`);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+            const mailtoLink = `mailto:${yourEmail}?subject=${subject}&body=${body}`;
+            window.location.href = mailtoLink;
+            
+            // Show success message (mailto opened)
+            if (contactFormMessage) {
+                contactFormMessage.style.display = 'block';
+                contactFormMessage.style.background = '#10b981';
+                contactFormMessage.style.color = 'white';
+                contactFormMessage.textContent = `✅ Thank you ${name}! Your email client should open. If it doesn't, please email me directly at ${yourEmail}`;
+                contactFormMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Reset form after a delay
+            setTimeout(() => {
+                contactForm.reset();
+                if (contactSubmitBtn) {
+                    contactSubmitBtn.disabled = false;
+                    contactSubmitBtn.textContent = 'Send Message';
+                }
+            }, 2000);
+        }
     });
 }
 
