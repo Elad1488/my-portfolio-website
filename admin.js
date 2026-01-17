@@ -1093,9 +1093,12 @@ function saveGalleryItem() {
     
     try {
         // Filter out empty additional images (no URL and no base64)
-        const validAdditionalImages = (additionalImages || []).filter(img => 
-            (img.imageUrl && img.imageUrl.trim()) || (img.imageBase64 && img.imageBase64.trim())
-        );
+        const validAdditionalImages = (additionalImages || []).filter(img => {
+            if (!img) return false;
+            const hasUrl = img.imageUrl && img.imageUrl.trim() !== '';
+            const hasBase64 = img.imageBase64 && img.imageBase64.trim() !== '';
+            return hasUrl || hasBase64;
+        });
         
         const item = {
             title: title,
@@ -1105,6 +1108,8 @@ function saveGalleryItem() {
             additionalImages: validAdditionalImages // Array of additional images (filtered)
         };
         
+        console.log('All additionalImages before filter:', additionalImages);
+        console.log('Valid additionalImages after filter:', validAdditionalImages);
         console.log('Saving gallery item with additionalImages:', validAdditionalImages.length, validAdditionalImages);
         
         // If editing existing item, preserve base64 if URL is provided
@@ -1285,15 +1290,18 @@ function handleFixedAdditionalImage(slotIndex, event) {
         additionalImages[slotIndex].imageBase64 = e.target.result;
         additionalImages[slotIndex].imageUrl = ''; // Clear URL if base64 is provided
         
-        // Update preview
-        const previewDiv = document.getElementById(`additional-image-${slotIndex + 2}-preview`);
+        // Update preview - slotIndex 0 = image 2, 1 = image 3, 2 = image 4
+        const imageNumber = slotIndex + 2; // 0+2=2, 1+2=3, 2+2=4
+        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
         if (previewDiv) {
             previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
         }
         
         // Clear URL input
-        const urlInput = document.getElementById(`additional-image-${slotIndex + 2}-url`);
+        const urlInput = document.getElementById(`additional-image-${imageNumber}-url`);
         if (urlInput) urlInput.value = '';
+        
+        console.log(`Saved additional image at index ${slotIndex} (Image ${imageNumber})`);
     };
     reader.readAsDataURL(file);
 }
@@ -1308,24 +1316,33 @@ function updateFixedAdditionalImageUrl(slotIndex, url) {
     if (url.trim()) {
         additionalImages[slotIndex].imageBase64 = null; // Clear base64 if URL is provided
         
-        // Update preview
-        const previewDiv = document.getElementById(`additional-image-${slotIndex + 2}-preview`);
+        // Update preview - slotIndex 0 = image 2, 1 = image 3, 2 = image 4
+        const imageNumber = slotIndex + 2; // 0+2=2, 1+2=3, 2+2=4
+        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
         if (previewDiv) {
             previewDiv.innerHTML = `<img src="${url.trim()}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
         }
+        console.log(`Updated additional image URL at index ${slotIndex} (Image ${imageNumber})`);
     } else {
         // Clear preview if URL is empty
-        const previewDiv = document.getElementById(`additional-image-${slotIndex + 2}-preview`);
+        const imageNumber = slotIndex + 2;
+        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
         if (previewDiv) previewDiv.innerHTML = '';
     }
 }
 
 function loadFixedAdditionalImages() {
     // Load images 2, 3, 4 into fixed slots
+    // i=0 -> additionalImages[0] -> Image 2 (display as "Additional Image 2")
+    // i=1 -> additionalImages[1] -> Image 3 (display as "Additional Image 3")
+    // i=2 -> additionalImages[2] -> Image 4 (display as "Additional Image 4")
+    console.log('Loading fixed additional images, count:', additionalImages.length);
+    
     for (let i = 0; i < 3; i++) {
         const img = additionalImages[i] || { imageUrl: '', imageBase64: null };
-        const urlInput = document.getElementById(`additional-image-${i + 2}-url`);
-        const previewDiv = document.getElementById(`additional-image-${i + 2}-preview`);
+        const imageNumber = i + 2; // 0+2=2, 1+2=3, 2+2=4
+        const urlInput = document.getElementById(`additional-image-${imageNumber}-url`);
+        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
         
         if (urlInput) {
             urlInput.value = img.imageUrl || '';
@@ -1333,12 +1350,13 @@ function loadFixedAdditionalImages() {
         
         if (previewDiv && (img.imageBase64 || img.imageUrl)) {
             previewDiv.innerHTML = `<img src="${img.imageBase64 || img.imageUrl}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
+            console.log(`Loaded Image ${imageNumber} at index ${i}:`, img.imageUrl || 'base64');
         } else if (previewDiv) {
             previewDiv.innerHTML = '';
         }
     }
     
-    // Render any additional images beyond the first 3
+    // Render any additional images beyond the first 3 (indices 3+)
     renderAdditionalImagesList();
 }
 
