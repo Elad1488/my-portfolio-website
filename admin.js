@@ -16,6 +16,7 @@ let currentEditingGallerySectionIndex = -1; // section index for gallery item
 let draggedElement = null;
 let draggedGalleryElement = null;
 let currentImageBase64 = null;
+let additionalImages = []; // Array of {imageUrl, imageBase64} for additional gallery images
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
@@ -932,6 +933,7 @@ function createGalleryItem(item, sectionIndex, itemIndex) {
 function addNewGalleryItem() {
     currentEditingGalleryIndex = -1;
     currentEditingGallerySectionIndex = -1;
+    additionalImages = [];
     document.getElementById('gallery-modal-title').textContent = 'Add Gallery Image';
     clearGalleryForm();
     updateSectionDropdown();
@@ -970,6 +972,10 @@ function editGalleryItem(sectionIndex, itemIndex) {
     document.getElementById('gallery-title').value = item.title || '';
     document.getElementById('gallery-description').value = item.description || '';
     document.getElementById('gallery-image-url').value = item.imageUrl || '';
+    
+    // Load additional images
+    additionalImages = item.additionalImages || [];
+    renderAdditionalImagesList();
     
     // Show preview if base64 image exists
     if (item.imageBase64) {
@@ -1090,7 +1096,9 @@ function saveGalleryItem() {
             title: title,
             description: description,
             imageUrl: imageUrl || '',
-            imageBase64: currentImageBase64 || null
+            imageBase64: currentImageBase64 || null,
+            additionalImages: additionalImages || [], // Array of additional images
+            additionalImages: additionalImages || [] // Array of additional images
         };
         
         // If editing existing item, preserve base64 if URL is provided
@@ -1169,6 +1177,76 @@ function clearGalleryForm() {
     const preview = document.getElementById('gallery-image-preview');
     if (preview) preview.style.display = 'none';
     currentImageBase64 = null;
+    additionalImages = [];
+    renderAdditionalImagesList();
+}
+
+// Additional images management
+function addAdditionalImageInput() {
+    additionalImages.push({ imageUrl: '', imageBase64: null });
+    renderAdditionalImagesList();
+}
+
+function removeAdditionalImage(index) {
+    additionalImages.splice(index, 1);
+    renderAdditionalImagesList();
+}
+
+function renderAdditionalImagesList() {
+    const container = document.getElementById('additional-images-list');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    additionalImages.forEach((img, index) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'margin-bottom: 0.75rem; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;';
+        div.innerHTML = `
+            <div style="display: flex; gap: 0.5rem; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Additional Image ${index + 1}</label>
+                    <input type="file" accept="image/*,.gif" onchange="handleAdditionalImageUpload(${index}, event)" style="width: 100%; margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="url" placeholder="Or image URL" value="${img.imageUrl || ''}" onchange="updateAdditionalImageUrl(${index}, this.value)" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                    ${img.imageBase64 || img.imageUrl ? `<img src="${img.imageBase64 || img.imageUrl}" alt="Preview" style="max-width: 100px; max-height: 100px; margin-top: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">` : ''}
+                </div>
+                <button type="button" onclick="removeAdditionalImage(${index})" style="padding: 0.5rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1.2rem; line-height: 1;">&times;</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function handleAdditionalImageUpload(index, event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
+    }
+    
+    // Check file size (60MB for GIFs, 5MB for others)
+    const maxSize = file.type === 'image/gif' ? 60 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert(`File is too large. Maximum size: ${maxSize / (1024 * 1024)}MB`);
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        additionalImages[index].imageBase64 = e.target.result;
+        additionalImages[index].imageUrl = ''; // Clear URL if base64 is provided
+        renderAdditionalImagesList();
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateAdditionalImageUrl(index, url) {
+    additionalImages[index].imageUrl = url.trim();
+    if (url.trim()) {
+        additionalImages[index].imageBase64 = null; // Clear base64 if URL is provided
+    }
+    renderAdditionalImagesList();
 }
 
 // ========== SECTION MANAGEMENT ==========
