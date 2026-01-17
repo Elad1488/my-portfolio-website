@@ -389,7 +389,7 @@ section {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0.5);
     opacity: 0.9;
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
@@ -397,7 +397,7 @@ section {
 
 .project-thumbnail-link:hover .youtube-play-overlay {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: translate(-50%, -50%) scale(0.55);
 }
 
 .project-video {
@@ -594,6 +594,26 @@ section {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
+}
+
+/* Mobile: 3 gallery images per row */
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+    
+    .gallery-item {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.4rem !important;
+    }
 }
 
 .gallery-section-display {

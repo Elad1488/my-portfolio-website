@@ -975,7 +975,7 @@ function editGalleryItem(sectionIndex, itemIndex) {
     
     // Load additional images
     additionalImages = item.additionalImages || [];
-    renderAdditionalImagesList();
+    loadFixedAdditionalImages();
     
     // Show preview if base64 image exists
     if (item.imageBase64) {
@@ -1178,7 +1178,7 @@ function clearGalleryForm() {
     if (preview) preview.style.display = 'none';
     currentImageBase64 = null;
     additionalImages = [];
-    renderAdditionalImagesList();
+    loadFixedAdditionalImages();
 }
 
 // Additional images management
@@ -1246,6 +1246,90 @@ function updateAdditionalImageUrl(index, url) {
     if (url.trim()) {
         additionalImages[index].imageBase64 = null; // Clear base64 if URL is provided
     }
+    renderAdditionalImagesList();
+}
+
+// Fixed additional images handlers (for images 2, 3, 4)
+function handleFixedAdditionalImage(slotIndex, event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
+    }
+    
+    // Check file size (60MB for GIFs, 5MB for others)
+    const maxSize = file.type === 'image/gif' ? 60 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert(`File is too large. Maximum size: ${maxSize / (1024 * 1024)}MB`);
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        // Ensure additionalImages array is long enough
+        while (additionalImages.length <= slotIndex) {
+            additionalImages.push({ imageUrl: '', imageBase64: null });
+        }
+        
+        additionalImages[slotIndex].imageBase64 = e.target.result;
+        additionalImages[slotIndex].imageUrl = ''; // Clear URL if base64 is provided
+        
+        // Update preview
+        const previewDiv = document.getElementById(`additional-image-${slotIndex + 2}-preview`);
+        if (previewDiv) {
+            previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
+        }
+        
+        // Clear URL input
+        const urlInput = document.getElementById(`additional-image-${slotIndex + 2}-url`);
+        if (urlInput) urlInput.value = '';
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateFixedAdditionalImageUrl(slotIndex, url) {
+    // Ensure additionalImages array is long enough
+    while (additionalImages.length <= slotIndex) {
+        additionalImages.push({ imageUrl: '', imageBase64: null });
+    }
+    
+    additionalImages[slotIndex].imageUrl = url.trim();
+    if (url.trim()) {
+        additionalImages[slotIndex].imageBase64 = null; // Clear base64 if URL is provided
+        
+        // Update preview
+        const previewDiv = document.getElementById(`additional-image-${slotIndex + 2}-preview`);
+        if (previewDiv) {
+            previewDiv.innerHTML = `<img src="${url.trim()}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
+        }
+    } else {
+        // Clear preview if URL is empty
+        const previewDiv = document.getElementById(`additional-image-${slotIndex + 2}-preview`);
+        if (previewDiv) previewDiv.innerHTML = '';
+    }
+}
+
+function loadFixedAdditionalImages() {
+    // Load images 2, 3, 4 into fixed slots
+    for (let i = 0; i < 3; i++) {
+        const img = additionalImages[i] || { imageUrl: '', imageBase64: null };
+        const urlInput = document.getElementById(`additional-image-${i + 2}-url`);
+        const previewDiv = document.getElementById(`additional-image-${i + 2}-preview`);
+        
+        if (urlInput) {
+            urlInput.value = img.imageUrl || '';
+        }
+        
+        if (previewDiv && (img.imageBase64 || img.imageUrl)) {
+            previewDiv.innerHTML = `<img src="${img.imageBase64 || img.imageUrl}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
+        } else if (previewDiv) {
+            previewDiv.innerHTML = '';
+        }
+    }
+    
+    // Render any additional images beyond the first 3
     renderAdditionalImagesList();
 }
 
