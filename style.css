@@ -619,15 +619,10 @@ section {
     overflow-x: hidden;
 }
 
-.gallery .container {
-    width: 100%;
-}
-
 .gallery-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
 .gallery-section-display {
@@ -650,6 +645,13 @@ section {
         width: 100% !important;
     }
     
+    /* Make main gallery-grid display sections one after another */
+    #gallery-grid.gallery-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+    
     .gallery-section-display {
         width: 100% !important;
         margin-bottom: 2rem;
@@ -657,7 +659,9 @@ section {
         box-sizing: border-box;
     }
     
-    .gallery-grid {
+    /* Section grid inside each section - 3 columns */
+    .gallery-section-display .gallery-grid {
+        display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 0.5rem !important;
         width: 100% !important;
@@ -687,6 +691,13 @@ section {
         width: 100% !important;
     }
     
+    /* Make main gallery-grid display sections one after another */
+    #gallery-grid.gallery-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+    
     .gallery-section-display {
         width: 100% !important;
         margin-bottom: 1.5rem;
@@ -694,7 +705,9 @@ section {
         box-sizing: border-box;
     }
     
-    .gallery-grid {
+    /* Section grid inside each section - 3 columns */
+    .gallery-section-display .gallery-grid {
+        display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 0.4rem !important;
         width: 100% !important;
