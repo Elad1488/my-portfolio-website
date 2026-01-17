@@ -1073,10 +1073,31 @@ section {
         padding: 2rem;
         box-shadow: var(--shadow-lg);
         transition: left 0.3s ease;
+        z-index: 1000;
+        gap: 0.5rem;
     }
 
     .nav-menu.active {
         left: 0;
+    }
+
+    .nav-menu li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-menu a {
+        display: block;
+        padding: 1rem;
+        font-size: 1.1rem;
+        color: white;
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-menu a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #3b82f6;
     }
 
     .hero .container {
