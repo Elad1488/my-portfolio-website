@@ -746,23 +746,38 @@ function openGalleryLightbox(item) {
     // Build array of all images: main image + additional images
     currentLightboxImages = [];
     
+    console.log('Opening lightbox for item:', item);
+    console.log('Additional images:', item.additionalImages);
+    
     // Add main image first
     const mainImageSrc = item.imageUrl || item.imageBase64 || '';
     if (mainImageSrc) {
         currentLightboxImages.push(mainImageSrc);
+        console.log('Added main image:', mainImageSrc.substring(0, 50) + '...');
     }
     
     // Add additional images
     if (item.additionalImages && Array.isArray(item.additionalImages)) {
-        item.additionalImages.forEach(additionalImg => {
+        console.log('Found additionalImages array with', item.additionalImages.length, 'items');
+        item.additionalImages.forEach((additionalImg, index) => {
             const imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
             if (imgSrc) {
                 currentLightboxImages.push(imgSrc);
+                console.log(`Added additional image ${index + 1}:`, imgSrc.substring(0, 50) + '...');
+            } else {
+                console.warn(`Additional image ${index + 1} has no source:`, additionalImg);
             }
         });
+    } else {
+        console.log('No additionalImages found or not an array:', item.additionalImages);
     }
     
-    if (currentLightboxImages.length === 0) return;
+    console.log('Total images in lightbox:', currentLightboxImages.length);
+    
+    if (currentLightboxImages.length === 0) {
+        console.error('No images to display in lightbox!');
+        return;
+    }
     
     currentLightboxIndex = 0;
     
