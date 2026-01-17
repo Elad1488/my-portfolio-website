@@ -116,7 +116,8 @@
                         <!-- Social links will be dynamically loaded here -->
                     </div>
                 </div>
-                <form class="contact-form">
+                <form class="contact-form" id="contact-form">
+                    <div id="contact-form-message" style="display: none; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; text-align: center; font-weight: 500;"></div>
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" id="name" name="name" required>
@@ -129,7 +130,7 @@
                         <label for="message">Message</label>
                         <textarea id="message" name="message" rows="5" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <button type="submit" class="btn btn-primary" id="contact-submit-btn">Send Message</button>
                 </form>
             </div>
         </div>
