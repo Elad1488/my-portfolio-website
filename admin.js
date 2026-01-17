@@ -1092,14 +1092,20 @@ function saveGalleryItem() {
     }
     
     try {
+        // Filter out empty additional images (no URL and no base64)
+        const validAdditionalImages = (additionalImages || []).filter(img => 
+            (img.imageUrl && img.imageUrl.trim()) || (img.imageBase64 && img.imageBase64.trim())
+        );
+        
         const item = {
             title: title,
             description: description,
             imageUrl: imageUrl || '',
             imageBase64: currentImageBase64 || null,
-            additionalImages: additionalImages || [], // Array of additional images
-            additionalImages: additionalImages || [] // Array of additional images
+            additionalImages: validAdditionalImages // Array of additional images (filtered)
         };
+        
+        console.log('Saving gallery item with additionalImages:', validAdditionalImages.length, validAdditionalImages);
         
         // If editing existing item, preserve base64 if URL is provided
         if (currentEditingGalleryIndex !== -1 && currentEditingGallerySectionIndex !== -1) {
@@ -1134,6 +1140,9 @@ function saveGalleryItem() {
         
         // Try to save to localStorage
         saveGalleryData(galleryData);
+        
+        console.log('Saved gallery item:', item);
+        console.log('Additional images saved:', item.additionalImages?.length || 0);
         
         loadGallery();
         closeGalleryModal();
