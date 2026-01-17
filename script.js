@@ -197,17 +197,22 @@ async function loadDataFromFile() {
             // localStorage is only used as fallback if data.json is empty
             if (siteData.gallery && (siteData.gallery.sections?.length > 0 || Object.keys(siteData.gallery).length > 1)) {
                 // Use data.json if it has gallery data
+                console.log('Using gallery from data.json:', siteData.gallery.sections?.length || 0, 'sections');
             } else {
                 // Fallback to localStorage only if data.json is empty
+                console.log('data.json has no gallery, checking localStorage...');
                 const storedGallery = localStorage.getItem('portfolio_gallery');
                 if (storedGallery && storedGallery !== '{"sections":[]}') {
                     try {
                         siteData.gallery = JSON.parse(storedGallery);
+                        console.log('Using gallery from localStorage (fallback):', siteData.gallery.sections?.length || 0, 'sections');
                     } catch (e) {
+                        console.error('Error parsing gallery from localStorage:', e);
                         siteData.gallery = { sections: [] };
                     }
                 } else {
                     siteData.gallery = { sections: [] };
+                    console.log('No gallery in localStorage either');
                 }
             }
             
@@ -633,6 +638,14 @@ function loadGallery() {
     // Admin can edit via localStorage, then export to update data.json for all visitors
     const galleryData = siteData?.gallery || { sections: [] };
     
+    console.log('Loading gallery:', galleryData);
+    console.log('Gallery sections count:', galleryData.sections?.length || 0);
+    if (galleryData.sections && galleryData.sections.length > 0) {
+        galleryData.sections.forEach((section, idx) => {
+            console.log(`Section ${idx}: "${section.name}" - ${section.items?.length || 0} items`);
+        });
+    }
+    
     const galleryGrid = document.getElementById('gallery-grid');
     
     // Migrate old format if needed
@@ -700,9 +713,14 @@ function createGalleryItem(item) {
     
     const imageSrc = item.imageUrl || item.imageBase64 || '';
     
+    // Debug log
+    if (!imageSrc) {
+        console.warn('Gallery item has no image source:', item);
+    }
+    
     div.innerHTML = `
         <div class="gallery-image-wrapper">
-            <img src="${imageSrc}" alt="${item.title || 'Gallery image'}" loading="lazy">
+            <img src="${imageSrc}" alt="${item.title || 'Gallery image'}" loading="lazy" onerror="console.error('Failed to load gallery image:', '${imageSrc.substring(0, 50)}...')">
             <div class="gallery-overlay">
                 <div class="gallery-content">
                     ${item.title ? `<h4>${item.title}</h4>` : ''}

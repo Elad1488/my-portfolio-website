@@ -217,9 +217,38 @@
                 <div class="form-group">
                     <label>Additional Images (Optional)</label>
                     <small>Add multiple related images that will be shown in the gallery lightbox when clicking the main image</small>
+                    
+                    <!-- Fixed slots for images 2, 3, 4 -->
+                    <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <!-- Image 2 -->
+                        <div id="additional-image-2" style="padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Additional Image 2</label>
+                            <input type="file" accept="image/*,.gif" onchange="handleFixedAdditionalImage(1, event)" style="width: 100%; margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="url" id="additional-image-2-url" placeholder="Or image URL" onchange="updateFixedAdditionalImageUrl(1, this.value)" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <div id="additional-image-2-preview" style="margin-top: 0.5rem;"></div>
+                        </div>
+                        
+                        <!-- Image 3 -->
+                        <div id="additional-image-3" style="padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Additional Image 3</label>
+                            <input type="file" accept="image/*,.gif" onchange="handleFixedAdditionalImage(2, event)" style="width: 100%; margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="url" id="additional-image-3-url" placeholder="Or image URL" onchange="updateFixedAdditionalImageUrl(2, this.value)" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <div id="additional-image-3-preview" style="margin-top: 0.5rem;"></div>
+                        </div>
+                        
+                        <!-- Image 4 -->
+                        <div id="additional-image-4" style="padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Additional Image 4</label>
+                            <input type="file" accept="image/*,.gif" onchange="handleFixedAdditionalImage(3, event)" style="width: 100%; margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="url" id="additional-image-4-url" placeholder="Or image URL" onchange="updateFixedAdditionalImageUrl(3, this.value)" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <div id="additional-image-4-preview" style="margin-top: 0.5rem;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- For more than 4 images, use dynamic list -->
                     <div id="additional-images-list" style="margin-top: 0.5rem;"></div>
-                    <button type="button" class="btn-add-secondary" onclick="addAdditionalImageInput()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #f0f0f0; border: 1px dashed #ccc; border-radius: 4px; cursor: pointer;">+ Add Additional Image</button>
-                    <small style="display: block; margin-top: 0.5rem; color: #666;">You can add multiple images (URLs or upload files). The first image is the main thumbnail shown in the gallery grid.</small>
+                    <button type="button" class="btn-add-secondary" onclick="addAdditionalImageInput()" style="margin-top: 0.75rem; padding: 0.5rem 1rem; background: #f0f0f0; border: 1px dashed #ccc; border-radius: 4px; cursor: pointer;">+ Add More Images (5+)</button>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">The first image is the main thumbnail. Additional images will appear in the lightbox when clicking the main image.</small>
                 </div>
             </div>
             <div class="modal-footer">
