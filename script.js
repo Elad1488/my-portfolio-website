@@ -788,7 +788,13 @@ function createGalleryItem(item) {
     const div = document.createElement('div');
     div.className = 'gallery-item';
     
-    const imageSrc = item.imageUrl || item.imageBase64 || '';
+    let imageSrc = item.imageUrl || item.imageBase64 || '';
+    
+    // Convert GitHub blob URLs to raw URLs automatically
+    if (imageSrc && imageSrc.includes('github.com') && imageSrc.includes('/blob/')) {
+        imageSrc = imageSrc.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+        console.log('Converted GitHub blob URL to raw URL:', imageSrc);
+    }
     
     // Debug log
     if (!imageSrc) {
@@ -826,8 +832,17 @@ function openGalleryLightbox(item) {
     console.log('Opening lightbox for item:', item);
     console.log('Additional images:', item.additionalImages);
     
+    // Helper function to convert GitHub blob URLs to raw URLs
+    function convertGitHubUrl(url) {
+        if (url && url.includes('github.com') && url.includes('/blob/')) {
+            return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+        }
+        return url;
+    }
+    
     // Add main image first
-    const mainImageSrc = item.imageUrl || item.imageBase64 || '';
+    let mainImageSrc = item.imageUrl || item.imageBase64 || '';
+    mainImageSrc = convertGitHubUrl(mainImageSrc);
     if (mainImageSrc) {
         currentLightboxImages.push(mainImageSrc);
         console.log('Added main image:', mainImageSrc.substring(0, 50) + '...');
@@ -837,7 +852,8 @@ function openGalleryLightbox(item) {
     if (item.additionalImages && Array.isArray(item.additionalImages)) {
         console.log('Found additionalImages array with', item.additionalImages.length, 'items');
         item.additionalImages.forEach((additionalImg, index) => {
-            const imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
+            let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
+            imgSrc = convertGitHubUrl(imgSrc);
             if (imgSrc) {
                 currentLightboxImages.push(imgSrc);
                 console.log(`Added additional image ${index + 1}:`, imgSrc.substring(0, 50) + '...');
