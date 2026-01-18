@@ -743,6 +743,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('about-text-1').addEventListener('input', saveAbout);
     document.getElementById('about-text-2').addEventListener('input', saveAbout);
     
+    // Update gallery image preview when URL is entered
+    const galleryImageUrlInput = document.getElementById('gallery-image-url');
+    if (galleryImageUrlInput) {
+        galleryImageUrlInput.addEventListener('input', function() {
+            const url = this.value.trim();
+            if (url) {
+                // Helper function to convert GitHub blob URLs to raw URLs
+                function convertGitHubUrl(url) {
+                    if (url && url.includes('github.com') && url.includes('/blob/')) {
+                        return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+                    }
+                    return url;
+                }
+                
+                const convertedUrl = convertGitHubUrl(url);
+                const preview = document.getElementById('gallery-image-preview');
+                const previewImg = document.getElementById('gallery-preview-img');
+                if (preview && previewImg) {
+                    previewImg.src = convertedUrl;
+                    preview.style.display = 'block';
+                    // Clear base64 when URL is entered
+                    currentImageBase64 = null;
+                }
+            } else {
+                // Clear preview if URL is empty
+                const preview = document.getElementById('gallery-image-preview');
+                if (preview) {
+                    preview.style.display = 'none';
+                }
+            }
+        });
+    }
+    
     // Auto-save contact
     ['contact-email', 'contact-phone', 'contact-linkedin', 'contact-github', 'contact-twitter'].forEach(id => {
         document.getElementById(id).addEventListener('input', saveContact);
