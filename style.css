@@ -891,6 +891,14 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+    cursor: grab;
+}
+
+.lightbox-image-container:active {
+    cursor: grabbing;
 }
 
 .lightbox-image {

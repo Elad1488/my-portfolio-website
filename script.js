@@ -815,7 +815,30 @@ function createGalleryItem(item) {
     
     // Add click handler to open lightbox
     div.addEventListener('click', () => {
-        openGalleryLightbox(item);
+        // Collect all gallery items for navigation
+        const galleryData = siteData?.gallery || { sections: [] };
+        const allItems = [];
+        let itemIndex = -1;
+        let currentIndex = 0;
+        
+        if (galleryData.sections) {
+            galleryData.sections.forEach(section => {
+                if (section.items) {
+                    section.items.forEach(galleryItem => {
+                        allItems.push(galleryItem);
+                        // Find current item index
+                        if ((galleryItem.imageUrl === item.imageUrl && item.imageUrl) ||
+                            (galleryItem.imageBase64 === item.imageBase64 && item.imageBase64) ||
+                            (galleryItem.title === item.title && item.title)) {
+                            itemIndex = currentIndex;
+                        }
+                        currentIndex++;
+                    });
+                }
+            });
+        }
+        
+        openGalleryLightbox(item, itemIndex, allItems);
     });
     
     return div;
@@ -824,6 +847,12 @@ function createGalleryItem(item) {
 // Gallery lightbox functionality with multiple images support
 let currentLightboxImages = [];
 let currentLightboxIndex = 0;
+let allGalleryItems = []; // Store all gallery items for navigation between items
+let currentGalleryItemIndex = 0; // Current item index in allGalleryItems
+let touchStartX = 0;
+let touchEndX = 0;
+let isDragging = false;
+let dragStartX = 0;
 
 function openGalleryLightbox(item) {
     // Build array of all images: main image + additional images
@@ -930,6 +959,78 @@ function openGalleryLightbox(item) {
                 navigateLightbox(1);
             }
         });
+        
+        // Touch/swipe support for mobile
+        const imageContainer = lightbox.querySelector('.lightbox-image-container');
+        if (imageContainer) {
+            // Touch events
+            imageContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+            
+            imageContainer.addEventListener('touchmove', (e) => {
+                touchEndX = e.touches[0].clientX;
+            }, { passive: true });
+            
+            imageContainer.addEventListener('touchend', () => {
+                const swipeThreshold = 50; // Minimum distance for swipe
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe left - next image
+                        navigateLightbox(1);
+                    } else {
+                        // Swipe right - previous image
+                        navigateLightbox(-1);
+                    }
+                }
+                touchStartX = 0;
+                touchEndX = 0;
+            });
+            
+            // Mouse drag support for desktop
+            imageContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                dragStartX = e.clientX;
+                imageContainer.style.cursor = 'grabbing';
+            });
+            
+            imageContainer.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    // Visual feedback could be added here
+                }
+            });
+            
+            imageContainer.addEventListener('mouseup', (e) => {
+                if (isDragging) {
+                    const dragThreshold = 50;
+                    const diff = dragStartX - e.clientX;
+                    
+                    if (Math.abs(diff) > dragThreshold) {
+                        if (diff > 0) {
+                            // Drag left - next image
+                            navigateLightbox(1);
+                        } else {
+                            // Drag right - previous image
+                            navigateLightbox(-1);
+                        }
+                    }
+                    isDragging = false;
+                    imageContainer.style.cursor = 'grab';
+                }
+            });
+            
+            imageContainer.addEventListener('mouseleave', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    imageContainer.style.cursor = 'grab';
+                }
+            });
+            
+            // Set initial cursor
+            imageContainer.style.cursor = 'grab';
+        }
     }
     
     // Update lightbox content
@@ -941,22 +1042,80 @@ function openGalleryLightbox(item) {
 }
 
 function navigateLightbox(direction) {
-    if (currentLightboxImages.length <= 1) return;
-    
-    currentLightboxIndex += direction;
-    
-    if (currentLightboxIndex < 0) {
-        currentLightboxIndex = currentLightboxImages.length - 1;
-    } else if (currentLightboxIndex >= currentLightboxImages.length) {
-        currentLightboxIndex = 0;
+    // Try to navigate within current item's images first
+    if (currentLightboxImages.length > 1) {
+        currentLightboxIndex += direction;
+        
+        if (currentLightboxIndex < 0) {
+            // Went before first image - go to previous item
+            currentLightboxIndex = 0;
+            navigateToItem(-1);
+            return;
+        } else if (currentLightboxIndex >= currentLightboxImages.length) {
+            // Went after last image - go to next item
+            currentLightboxIndex = currentLightboxImages.length - 1;
+            navigateToItem(1);
+            return;
+        }
+        
+        // Update image within current item
+        const img = document.querySelector('.lightbox-image');
+        if (img) {
+            img.src = currentLightboxImages[currentLightboxIndex];
+        }
+        updateLightboxDots();
+    } else {
+        // Only one image in current item - navigate to next/previous item
+        navigateToItem(direction);
     }
+}
+
+function navigateToItem(direction) {
+    if (allGalleryItems.length <= 1) return;
     
-    const img = document.querySelector('.lightbox-image');
-    if (img) {
-        img.src = currentLightboxImages[currentLightboxIndex];
+    // Find next/previous item with images
+    let attempts = 0;
+    let newItemIndex = currentGalleryItemIndex;
+    
+    do {
+        newItemIndex += direction;
+        
+        if (newItemIndex < 0) {
+            newItemIndex = allGalleryItems.length - 1;
+        } else if (newItemIndex >= allGalleryItems.length) {
+            newItemIndex = 0;
+        }
+        
+        attempts++;
+        if (attempts > allGalleryItems.length) {
+            // Prevent infinite loop
+            return;
+        }
+    } while (!hasImages(allGalleryItems[newItemIndex]) && attempts < allGalleryItems.length);
+    
+    // Open the new item
+    const newItem = allGalleryItems[newItemIndex];
+    if (newItem) {
+        currentGalleryItemIndex = newItemIndex;
+        // Rebuild images array for new item
+        openGalleryLightbox(newItem, newItemIndex, allGalleryItems);
+        // Set to first or last image based on direction
+        if (direction > 0) {
+            currentLightboxIndex = 0;
+        } else {
+            currentLightboxIndex = currentLightboxImages.length - 1;
+        }
+        updateLightboxContent(newItem);
     }
-    
-    updateLightboxDots();
+}
+
+function hasImages(item) {
+    if (!item) return false;
+    if (item.imageUrl || item.imageBase64) return true;
+    if (item.additionalImages && Array.isArray(item.additionalImages) && item.additionalImages.length > 0) {
+        return item.additionalImages.some(img => img.imageUrl || img.imageBase64);
+    }
+    return false;
 }
 
 function updateLightboxContent(item) {
