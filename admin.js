@@ -904,7 +904,16 @@ function createGalleryItem(item, sectionIndex, itemIndex) {
     div.dataset.sectionIndex = sectionIndex;
     div.dataset.itemIndex = itemIndex;
     
-    const imageSrc = item.imageUrl || item.imageBase64 || '';
+    // Helper function to convert GitHub blob URLs to raw URLs
+    function convertGitHubUrl(url) {
+        if (url && url.includes('github.com') && url.includes('/blob/')) {
+            return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+        }
+        return url;
+    }
+    
+    let imageSrc = item.imageUrl || item.imageBase64 || '';
+    imageSrc = convertGitHubUrl(imageSrc);
     
     div.innerHTML = `
         <div class="drag-handle" title="Drag to reorder or move between sections">☰</div>
@@ -977,6 +986,14 @@ function editGalleryItem(sectionIndex, itemIndex) {
     additionalImages = item.additionalImages || [];
     loadFixedAdditionalImages();
     
+    // Helper function to convert GitHub blob URLs to raw URLs
+    function convertGitHubUrl(url) {
+        if (url && url.includes('github.com') && url.includes('/blob/')) {
+            return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+        }
+        return url;
+    }
+    
     // Show preview if base64 image exists
     if (item.imageBase64) {
         currentImageBase64 = item.imageBase64;
@@ -990,7 +1007,9 @@ function editGalleryItem(sectionIndex, itemIndex) {
         const preview = document.getElementById('gallery-image-preview');
         const previewImg = document.getElementById('gallery-preview-img');
         if (preview && previewImg) {
-            previewImg.src = item.imageUrl;
+            // Convert GitHub blob URLs to raw URLs for preview
+            const convertedUrl = convertGitHubUrl(item.imageUrl);
+            previewImg.src = convertedUrl;
             preview.style.display = 'block';
         }
     }
