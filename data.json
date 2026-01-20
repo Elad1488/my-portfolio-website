@@ -207,10 +207,14 @@
     ]
   },
   "about": {
-    "text1": "",
-    "text2": ""
+    "text1": "jfujfyujfjfyujyfjf",
+    "text2": "dyjrujyu"
   },
-  "skills": [],
+  "skills": [
+    "Nvidia Isaac Sim & Lab",
+    "MATLAB",
+    "Python"
+  ],
   "contact": {
     "email": "elad1488@gmail.com",
     "phone": "+972 502337704",
