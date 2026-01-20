@@ -276,6 +276,15 @@ section {
     align-items: start;
 }
 
+/* Skills on the left, about text on the right */
+.about-content .skills {
+    order: -1;
+}
+
+.about-content .about-text {
+    order: 1;
+}
+
 .about-text p {
     font-size: 1.1rem;
     line-height: 1.8;
