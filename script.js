@@ -788,30 +788,84 @@ function createGalleryItem(item) {
     const div = document.createElement('div');
     div.className = 'gallery-item';
     
-    let imageSrc = item.imageUrl || item.imageBase64 || '';
+    // Helper function to convert GitHub blob URLs to raw URLs
+    function convertGitHubUrl(url) {
+        if (url && url.includes('github.com') && url.includes('/blob/')) {
+            return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+        }
+        return url;
+    }
     
-    // Convert GitHub blob URLs to raw URLs automatically
-    if (imageSrc && imageSrc.includes('github.com') && imageSrc.includes('/blob/')) {
-        imageSrc = imageSrc.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
-        console.log('Converted GitHub blob URL to raw URL:', imageSrc);
+    let imageSrc = item.imageUrl || item.imageBase64 || '';
+    imageSrc = convertGitHubUrl(imageSrc);
+    
+    // Collect all images for this item (main + additional)
+    const allImages = [];
+    if (imageSrc) {
+        allImages.push(imageSrc);
+    }
+    
+    if (item.additionalImages && Array.isArray(item.additionalImages)) {
+        item.additionalImages.forEach(additionalImg => {
+            let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
+            imgSrc = convertGitHubUrl(imgSrc);
+            if (imgSrc) {
+                allImages.push(imgSrc);
+            }
+        });
     }
     
     // Debug log
-    if (!imageSrc) {
+    if (allImages.length === 0) {
         console.warn('Gallery item has no image source:', item);
     }
     
-    div.innerHTML = `
-        <div class="gallery-image-wrapper">
-            <img src="${imageSrc}" alt="${item.title || 'Gallery image'}" loading="lazy" onerror="console.error('Failed to load gallery image:', '${imageSrc.substring(0, 50)}...')">
-            <div class="gallery-overlay">
-                <div class="gallery-content">
-                    ${item.title ? `<h4>${item.title}</h4>` : ''}
-                    ${item.description ? `<p>${item.description}</p>` : ''}
-                </div>
-            </div>
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'gallery-image-wrapper';
+    
+    const img = document.createElement('img');
+    img.src = allImages[0] || '';
+    img.alt = item.title || 'Gallery image';
+    img.loading = 'lazy';
+    img.onerror = () => console.error('Failed to load gallery image:', (allImages[0] || '').substring(0, 50) + '...');
+    
+    imageWrapper.appendChild(img);
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'gallery-overlay';
+    overlay.innerHTML = `
+        <div class="gallery-content">
+            ${item.title ? `<h4>${item.title}</h4>` : ''}
+            ${item.description ? `<p>${item.description}</p>` : ''}
         </div>
     `;
+    
+    imageWrapper.appendChild(overlay);
+    div.appendChild(imageWrapper);
+    
+    // Add hover cycling for multiple images
+    let hoverInterval = null;
+    let currentHoverIndex = 0;
+    
+    if (allImages.length > 1) {
+        div.addEventListener('mouseenter', () => {
+            currentHoverIndex = 0; // Start from first image
+            hoverInterval = setInterval(() => {
+                currentHoverIndex = (currentHoverIndex + 1) % allImages.length;
+                img.src = allImages[currentHoverIndex];
+            }, 1000); // Switch every 1 second
+        });
+        
+        div.addEventListener('mouseleave', () => {
+            if (hoverInterval) {
+                clearInterval(hoverInterval);
+                hoverInterval = null;
+            }
+            // Reset to first image
+            currentHoverIndex = 0;
+            img.src = allImages[0];
+        });
+    }
     
     // Add click handler to open lightbox
     div.addEventListener('click', () => {
