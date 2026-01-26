@@ -723,19 +723,28 @@ function setupHeroGifSlideshow() {
         return lowerUrl.endsWith('.gif') || lowerUrl.includes('.gif?') || lowerUrl.includes('gif');
     }
     
-    // Collect all GIFs from gallery
-    const gifUrls = [];
+    // Collect images only from Simulation & CAD and 3D printing sections
+    const simulationImages = [];
+    const printingImages = [];
     const galleryData = siteData?.gallery || { sections: [] };
     
     if (galleryData.sections) {
         galleryData.sections.forEach(section => {
-            if (section.items) {
+            const sectionName = (section.name || '').toLowerCase();
+            const isSimulation = sectionName.includes('simulation') || sectionName.includes('cad');
+            const isPrinting = sectionName.includes('3d') || sectionName.includes('printing') || sectionName.includes('print');
+            
+            if (section.items && (isSimulation || isPrinting)) {
                 section.items.forEach(item => {
-                    // Check main image
+                    // Check main image (accept all images, not just GIFs)
                     let mainImage = item.imageUrl || item.imageBase64 || '';
                     mainImage = convertGitHubUrl(mainImage);
-                    if (mainImage && isGif(mainImage)) {
-                        gifUrls.push(mainImage);
+                    if (mainImage) {
+                        if (isSimulation) {
+                            simulationImages.push(mainImage);
+                        } else if (isPrinting) {
+                            printingImages.push(mainImage);
+                        }
                     }
                     
                     // Check additional images
@@ -743,14 +752,64 @@ function setupHeroGifSlideshow() {
                         item.additionalImages.forEach(additionalImg => {
                             let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
                             imgSrc = convertGitHubUrl(imgSrc);
-                            if (imgSrc && isGif(imgSrc)) {
-                                gifUrls.push(imgSrc);
+                            if (imgSrc) {
+                                if (isSimulation) {
+                                    simulationImages.push(imgSrc);
+                                } else if (isPrinting) {
+                                    printingImages.push(imgSrc);
+                                }
                             }
                         });
                     }
                 });
             }
         });
+    }
+    
+    // Combine images with 80% Simulation, 20% 3D printing ratio
+    const gifUrls = [];
+    const totalSimulation = simulationImages.length;
+    const totalPrinting = printingImages.length;
+    
+    if (totalSimulation === 0 && totalPrinting === 0) {
+        console.log('No images found in Simulation or 3D printing sections');
+    } else {
+        // Calculate how many images from each section to include
+        // Target: 80% Simulation, 20% Printing
+        // We'll use a simple approach: for every 4 simulation images, add 1 printing image
+        let simIndex = 0;
+        let printIndex = 0;
+        
+        // Add images in 80/20 ratio
+        while (simIndex < totalSimulation || printIndex < totalPrinting) {
+            // Add 4 simulation images for every 1 printing image
+            for (let i = 0; i < 4 && simIndex < totalSimulation; i++) {
+                gifUrls.push(simulationImages[simIndex]);
+                simIndex++;
+            }
+            
+            // Add 1 printing image
+            if (printIndex < totalPrinting) {
+                gifUrls.push(printingImages[printIndex]);
+                printIndex++;
+            }
+            
+            // If we've added all printing images but still have simulation images, add them all
+            if (printIndex >= totalPrinting && simIndex < totalSimulation) {
+                while (simIndex < totalSimulation) {
+                    gifUrls.push(simulationImages[simIndex]);
+                    simIndex++;
+                }
+            }
+            
+            // If we've added all simulation images but still have printing images, stop
+            if (simIndex >= totalSimulation) {
+                break;
+            }
+        }
+        
+        console.log(`Hero slideshow: ${simulationImages.length} Simulation images, ${printingImages.length} 3D printing images`);
+        console.log(`Combined ${gifUrls.length} images in 80/20 ratio`);
     }
     
     // Add dedicated hero slideshow images from data.json or localStorage
