@@ -706,6 +706,97 @@ function loadHero() {
         const email = contact.email || 'elad1488@gmail.com';
         contactMeBtn.href = `mailto:${email}`;
     }
+    
+    // Setup GIF slideshow in hero background
+    setupHeroGifSlideshow();
+}
+
+// Setup GIF slideshow in hero background
+function setupHeroGifSlideshow() {
+    const slideshowContainer = document.getElementById('hero-background-slideshow');
+    if (!slideshowContainer) return;
+    
+    // Helper function to convert GitHub blob URLs to raw URLs
+    function convertGitHubUrl(url) {
+        if (url && url.includes('github.com') && url.includes('/blob/')) {
+            return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+        }
+        return url;
+    }
+    
+    // Helper function to check if URL is a GIF
+    function isGif(url) {
+        if (!url) return false;
+        const lowerUrl = url.toLowerCase();
+        return lowerUrl.endsWith('.gif') || lowerUrl.includes('.gif?') || lowerUrl.includes('gif');
+    }
+    
+    // Collect all GIFs from gallery
+    const gifUrls = [];
+    const galleryData = siteData?.gallery || { sections: [] };
+    
+    if (galleryData.sections) {
+        galleryData.sections.forEach(section => {
+            if (section.items) {
+                section.items.forEach(item => {
+                    // Check main image
+                    let mainImage = item.imageUrl || item.imageBase64 || '';
+                    mainImage = convertGitHubUrl(mainImage);
+                    if (mainImage && isGif(mainImage)) {
+                        gifUrls.push(mainImage);
+                    }
+                    
+                    // Check additional images
+                    if (item.additionalImages && Array.isArray(item.additionalImages)) {
+                        item.additionalImages.forEach(additionalImg => {
+                            let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
+                            imgSrc = convertGitHubUrl(imgSrc);
+                            if (imgSrc && isGif(imgSrc)) {
+                                gifUrls.push(imgSrc);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+    
+    // If no GIFs found, don't show slideshow
+    if (gifUrls.length === 0) {
+        console.log('No GIFs found in gallery for hero slideshow');
+        return;
+    }
+    
+    console.log(`Found ${gifUrls.length} GIFs for hero slideshow:`, gifUrls);
+    
+    // Create img elements for each GIF
+    gifUrls.forEach((gifUrl, index) => {
+        const img = document.createElement('img');
+        img.src = gifUrl;
+        img.alt = `Hero background GIF ${index + 1}`;
+        img.loading = 'eager'; // Load immediately for background
+        if (index === 0) {
+            img.classList.add('active'); // First image is active
+        }
+        slideshowContainer.appendChild(img);
+    });
+    
+    // Cycle through GIFs every 2 seconds
+    let currentIndex = 0;
+    const images = slideshowContainer.querySelectorAll('img');
+    
+    if (images.length > 1) {
+        setInterval(() => {
+            // Remove active class from current image
+            images[currentIndex].classList.remove('active');
+            
+            // Move to next image
+            currentIndex = (currentIndex + 1) % images.length;
+            
+            // Add active class to new image
+            images[currentIndex].classList.add('active');
+        }, 2000); // 2 seconds per GIF
+    }
 }
 
 // Load Gallery Section
