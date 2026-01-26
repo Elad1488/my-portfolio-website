@@ -183,6 +183,7 @@ body {
     gap: 2rem;
     align-items: flex-start;
     position: relative;
+    margin-left: -20%;
 }
 
 .hero-content {
@@ -1169,6 +1170,7 @@ section {
 
     .hero-left-section {
         align-items: center;
+        margin-left: 0;
     }
 
     .hero-title {
