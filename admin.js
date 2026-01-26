@@ -5,7 +5,8 @@ const STORAGE_KEYS = {
     ABOUT: 'portfolio_about',
     SKILLS: 'portfolio_skills',
     CONTACT: 'portfolio_contact',
-    HERO: 'portfolio_hero'
+    HERO: 'portfolio_hero',
+    HERO_SLIDESHOW: 'portfolio_hero_slideshow'
 };
 
 // Current editing project index
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAllData();
     initializeDragAndDrop();
     loadGallery();
+    loadHeroSlideshow();
 });
 
 // Clean up YouTube thumbnail URLs from thumbnail field (one-time cleanup)
@@ -734,6 +736,86 @@ function saveHero() {
     };
     localStorage.setItem(STORAGE_KEYS.HERO, JSON.stringify(hero));
     // Note: User needs to export data.json to update live site
+}
+
+// ========== HERO SLIDESHOW IMAGES ==========
+
+// Helper function to convert GitHub blob URLs to raw URLs
+function convertGitHubUrl(url) {
+    if (url && url.includes('github.com') && url.includes('/blob/')) {
+        return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+    }
+    return url;
+}
+
+function loadHeroSlideshow() {
+    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    const list = document.getElementById('hero-slideshow-list');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    images.forEach((img, index) => {
+        const item = document.createElement('div');
+        item.className = 'hero-slideshow-item';
+        item.style.cssText = 'padding: 1rem; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; background: #f9f9f9;';
+        
+        const preview = img.imageBase64 ? img.imageBase64 : (img.imageUrl || '');
+        const previewHtml = preview ? `<img src="${convertGitHubUrl(preview)}" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 0.5rem; display: block;">` : '';
+        
+        item.innerHTML = `
+            <div style="display: flex; gap: 1rem; align-items: start;">
+                <div style="flex: 1;">
+                    ${previewHtml}
+                    <input type="url" id="hero-slideshow-url-${index}" value="${img.imageUrl || ''}" placeholder="Image/GIF URL" onchange="updateHeroSlideshowImage(${index})" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="file" id="hero-slideshow-file-${index}" accept="image/*,.gif" onchange="handleHeroSlideshowUpload(${index}, event)" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                    <button class="btn-remove" onclick="removeHeroSlideshowImage(${index})" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
+                </div>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+}
+
+function addHeroSlideshowImage() {
+    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    images.push({ imageUrl: '', imageBase64: null });
+    localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+    loadHeroSlideshow();
+}
+
+function updateHeroSlideshowImage(index) {
+    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    const urlInput = document.getElementById(`hero-slideshow-url-${index}`);
+    if (urlInput && images[index]) {
+        images[index].imageUrl = urlInput.value;
+        images[index].imageBase64 = null; // Clear base64 when URL is set
+        localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+        loadHeroSlideshow();
+    }
+}
+
+function handleHeroSlideshowUpload(index, event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+        if (images[index]) {
+            images[index].imageBase64 = e.target.result;
+            images[index].imageUrl = ''; // Clear URL when base64 is set
+            localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+            loadHeroSlideshow();
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeHeroSlideshowImage(index) {
+    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    images.splice(index, 1);
+    localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+    loadHeroSlideshow();
 }
 
 // ========== AUTO-SAVE ON CHANGE ==========
@@ -1516,7 +1598,8 @@ function exportAllData() {
         about: JSON.parse(localStorage.getItem(STORAGE_KEYS.ABOUT) || '{"text1":"","text2":""}'),
         skills: JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]'),
         contact: JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT) || '{}'),
-        hero: JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO) || '{}')
+        hero: JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO) || '{}'),
+        heroSlideshow: JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]')
     };
     
     const jsonString = JSON.stringify(data, null, 2);
@@ -1577,11 +1660,13 @@ async function importDataFromFile() {
             if (data.skills) localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(data.skills));
             if (data.contact) localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(data.contact));
             if (data.hero) localStorage.setItem(STORAGE_KEYS.HERO, JSON.stringify(data.hero));
+            if (data.heroSlideshow) localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(data.heroSlideshow));
             
             // Reload all data
             loadAllData();
             loadGallery();
             loadProjects();
+            loadHeroSlideshow();
             
             showSuccess('Data imported successfully!');
         } catch (error) {
