@@ -134,6 +134,33 @@ body {
     bottom: 0;
     background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
     opacity: 0.3;
+    z-index: 1;
+}
+
+/* Hero background GIF slideshow */
+.hero-background-slideshow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.hero-background-slideshow img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.hero-background-slideshow img.active {
+    opacity: 0.15;
 }
 
 .hero .container {
@@ -270,19 +297,18 @@ section {
 }
 
 .about-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
 }
 
-/* Skills on the left, about text on the right */
-.about-content .skills {
-    order: -1;
-}
-
+/* About text first, then skills below */
 .about-content .about-text {
     order: 1;
+}
+
+.about-content .skills {
+    order: 2;
 }
 
 .about-text p {
