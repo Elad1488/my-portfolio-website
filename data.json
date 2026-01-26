@@ -67,12 +67,19 @@
   "gallery": {
     "sections": [
       {
-        "name": "CAD",
+        "name": "Simulation & CAD",
         "items": [
           {
             "title": "ATLAS 2.0 | imported to Isaac Sim as URDF",
             "description": "",
             "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/ATLAS%20GIF.gif",
+            "imageBase64": null,
+            "additionalImages": []
+          },
+          {
+            "title": "Stability Without Yaw Constraints: Spot in Free Rotation",
+            "description": "In this task, Spot is required to maintain balance and locomotion stability while yaw rotation is left completely unconstrained.\nThe resulting behavior resembles a spinning top, highlighting the controller’s ability to stabilize the system without restricting rotational degrees of freedom.",
+            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Draidel_SPOT_GIF.gif",
             "imageBase64": null,
             "additionalImages": []
           },
@@ -241,5 +248,11 @@
     "name": "Elad Giladi",
     "subtitle": "Aerospace Engineer",
     "description": "Robotics & Reinforcement Learning"
-  }
+  },
+  "heroSlideshow": [
+    {
+      "imageUrl": "",
+      "imageBase64": null
+    }
+  ]
 }
