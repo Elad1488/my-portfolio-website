@@ -766,13 +766,27 @@ function setupHeroGifSlideshow() {
         });
     }
     
+    // Add dedicated hero slideshow images from data.json or localStorage FIRST
+    const heroSlideshowData = siteData?.heroSlideshow || JSON.parse(localStorage.getItem('portfolio_hero_slideshow') || '[]');
+    const dedicatedImages = [];
+    if (heroSlideshowData && Array.isArray(heroSlideshowData)) {
+        heroSlideshowData.forEach(img => {
+            let imgSrc = img.imageUrl || img.imageBase64 || '';
+            imgSrc = convertGitHubUrl(imgSrc);
+            if (imgSrc) {
+                dedicatedImages.push(imgSrc);
+            }
+        });
+        console.log(`Found ${dedicatedImages.length} dedicated hero slideshow images:`, dedicatedImages);
+    }
+    
     // Combine images with 80% Simulation, 20% 3D printing ratio
-    const gifUrls = [];
+    const gifUrls = [...dedicatedImages]; // Start with dedicated images
     const totalSimulation = simulationImages.length;
     const totalPrinting = printingImages.length;
     
-    if (totalSimulation === 0 && totalPrinting === 0) {
-        console.log('No images found in Simulation or 3D printing sections');
+    if (totalSimulation === 0 && totalPrinting === 0 && dedicatedImages.length === 0) {
+        console.log('No images found in Simulation, 3D printing sections, or dedicated slideshow');
     } else {
         // Calculate how many images from each section to include
         // Target: 80% Simulation, 20% Printing
@@ -808,20 +822,8 @@ function setupHeroGifSlideshow() {
             }
         }
         
-        console.log(`Hero slideshow: ${simulationImages.length} Simulation images, ${printingImages.length} 3D printing images`);
-        console.log(`Combined ${gifUrls.length} images in 80/20 ratio`);
-    }
-    
-    // Add dedicated hero slideshow images from data.json or localStorage
-    const heroSlideshowData = siteData?.heroSlideshow || JSON.parse(localStorage.getItem('portfolio_hero_slideshow') || '[]');
-    if (heroSlideshowData && Array.isArray(heroSlideshowData)) {
-        heroSlideshowData.forEach(img => {
-            let imgSrc = img.imageUrl || img.imageBase64 || '';
-            imgSrc = convertGitHubUrl(imgSrc);
-            if (imgSrc) {
-                gifUrls.push(imgSrc); // Add all images (GIFs and regular images) from dedicated slideshow
-            }
-        });
+        console.log(`Hero slideshow: ${dedicatedImages.length} dedicated, ${simulationImages.length} Simulation images, ${printingImages.length} 3D printing images`);
+        console.log(`Combined ${gifUrls.length} total images in slideshow`);
     }
     
     // If no images found, don't show slideshow
