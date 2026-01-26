@@ -785,7 +785,7 @@ function setupHeroGifSlideshow() {
         slideshowContainer.appendChild(img);
     });
     
-    // Cycle through GIFs every 1.5 seconds
+    // Cycle through images every 2.5 seconds
     let currentIndex = 0;
     const images = slideshowContainer.querySelectorAll('img');
     
@@ -799,7 +799,7 @@ function setupHeroGifSlideshow() {
             
             // Add active class to new image
             images[currentIndex].classList.add('active');
-        }, 1500); // 1.5 seconds per GIF
+        }, 2500); // 2.5 seconds per image
     }
 }
 
