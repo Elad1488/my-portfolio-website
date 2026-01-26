@@ -753,19 +753,31 @@ function setupHeroGifSlideshow() {
         });
     }
     
-    // If no GIFs found, don't show slideshow
+    // Add dedicated hero slideshow images from data.json or localStorage
+    const heroSlideshowData = siteData?.heroSlideshow || JSON.parse(localStorage.getItem('portfolio_hero_slideshow') || '[]');
+    if (heroSlideshowData && Array.isArray(heroSlideshowData)) {
+        heroSlideshowData.forEach(img => {
+            let imgSrc = img.imageUrl || img.imageBase64 || '';
+            imgSrc = convertGitHubUrl(imgSrc);
+            if (imgSrc) {
+                gifUrls.push(imgSrc); // Add all images (GIFs and regular images) from dedicated slideshow
+            }
+        });
+    }
+    
+    // If no images found, don't show slideshow
     if (gifUrls.length === 0) {
-        console.log('No GIFs found in gallery for hero slideshow');
+        console.log('No images found for hero slideshow');
         return;
     }
     
-    console.log(`Found ${gifUrls.length} GIFs for hero slideshow:`, gifUrls);
+    console.log(`Found ${gifUrls.length} images for hero slideshow:`, gifUrls);
     
-    // Create img elements for each GIF
-    gifUrls.forEach((gifUrl, index) => {
+    // Create img elements for each image
+    gifUrls.forEach((imgUrl, index) => {
         const img = document.createElement('img');
-        img.src = gifUrl;
-        img.alt = `Hero background GIF ${index + 1}`;
+        img.src = imgUrl;
+        img.alt = `Hero background image ${index + 1}`;
         img.loading = 'eager'; // Load immediately for background
         if (index === 0) {
             img.classList.add('active'); // First image is active

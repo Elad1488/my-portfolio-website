@@ -1181,6 +1181,16 @@ section {
         margin-top: 0;
     }
 
+    .hero-image {
+        position: relative !important;
+        left: auto !important;
+        transform: none !important;
+        top: auto !important;
+        margin-top: 2rem !important;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .hero-title {
         font-size: 2.5rem;
     }
