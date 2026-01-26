@@ -1076,7 +1076,20 @@ function openGalleryLightbox(item) {
         document.body.appendChild(lightbox);
         
         // Close on button click
-        lightbox.querySelector('.lightbox-close').addEventListener('click', closeGalleryLightbox);
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeGalleryLightbox();
+            });
+            // Also add touch event for mobile
+            closeBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeGalleryLightbox();
+            });
+        }
         
         // Navigation buttons
         lightbox.querySelector('.lightbox-prev').addEventListener('click', (e) => {
