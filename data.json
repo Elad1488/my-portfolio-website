@@ -214,24 +214,25 @@
     ]
   },
   "about": {
-    "text1": "jfujfyujfjfyujyfjf",
-    "text2": "dyjrujyu"
+    "text1": "I’m 37, married, and a father of two.\nI hold an M.Sc. in Aeronautical & Space Engineering and a B.A. in Economics, both from the Technion – Israel Institute of Technology.\nI have 11 years of experience in the defense industry, working on active missile defense systems and safety-critical technologies.\n\nMy true passion is robotics, with a focus on Reinforcement Learning, control theory, and locomotion algorithms for humanoid and legged robots.\nI’m especially interested in the intersection of classical control, physics, and learning-based approaches, explored through simulation-heavy work.",
+    "text2": "Outside of engineering, I enjoy basketball, drawing, and music, and I’m also a professional comedian."
   },
   "skills": [
     "Nvidia Isaac Sim & Lab",
-    "MATLAB",
-    "Python"
+    "MATLAB & Simulink",
+    "Python",
+    "MuJoCo"
   ],
   "contact": {
     "email": "elad1488@gmail.com",
     "phone": "+972 502337704",
-    "linkedin": "",
+    "linkedin": "https://www.linkedin.com/in/elad-giladi-000b66136/",
     "github": "",
     "twitter": ""
   },
   "hero": {
     "name": "Elad Giladi",
-    "subtitle": "Engineer",
+    "subtitle": "Aerospace Engineer",
     "description": "Robotics & Reinforcement Learning"
   }
 }
