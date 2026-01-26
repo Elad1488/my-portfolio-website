@@ -214,8 +214,8 @@
     ]
   },
   "about": {
-    "text1": "I’m 37, married, and a father of two.\nI hold an M.Sc. in Aeronautical & Space Engineering and a B.A. in Economics, both from the Technion – Israel Institute of Technology.\nI have 11 years of experience in the defense industry, working on active missile defense systems and safety-critical technologies.\n\nMy true passion is robotics, with a focus on Reinforcement Learning, control theory, and locomotion algorithms for humanoid and legged robots.\nI’m especially interested in the intersection of classical control, physics, and learning-based approaches, explored through simulation-heavy work.",
-    "text2": "Outside of engineering, I enjoy basketball, drawing, and music, and I’m also a professional comedian."
+    "text1": "I hold an M.Sc. in Aeronautical & Space Engineering and a B.A. in Economics, both from the Technion – Israel Institute of Technology.\nI have over a decade of experience in active missile defense.\nMy primary focus and passion is robotics, with emphasis on Reinforcement Learning, control theory, and locomotion algorithms for humanoid and legged robots.\nI work primarily through simulation-driven experimentation, bridging classical control with learning-based methods.",
+    "text2": "Outside of work, my interests include basketball, drawing, music, and professional comedy."
   },
   "skills": [
     "Nvidia Isaac Sim & Lab",
