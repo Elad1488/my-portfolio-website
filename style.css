@@ -155,8 +155,8 @@ body {
     transform: translate(-50%, -50%);
     width: auto;
     height: auto;
-    max-width: 90%;
-    max-height: 90%;
+    max-width: 108%;
+    max-height: 108%;
     object-fit: contain;
     opacity: 0;
     transition: opacity 1s ease-in-out;
@@ -175,6 +175,13 @@ body {
     z-index: 2;
     margin-left: auto;
     width: 100%;
+}
+
+.hero-left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: flex-start;
 }
 
 .hero-content {
@@ -1151,6 +1158,10 @@ section {
     .hero .container {
         grid-template-columns: 1fr;
         text-align: center;
+    }
+
+    .hero-left-section {
+        align-items: center;
     }
 
     .hero-title {
