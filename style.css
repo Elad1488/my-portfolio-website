@@ -182,6 +182,7 @@ body {
     flex-direction: column;
     gap: 2rem;
     align-items: flex-start;
+    position: relative;
 }
 
 .hero-content {
@@ -257,6 +258,12 @@ body {
     justify-content: center;
     align-items: center;
     animation: fadeInRight 0.8s ease;
+    position: absolute;
+    left: 50%;
+    transform: translateX(calc(-50% - 100px));
+    top: 50%;
+    margin-top: -150px;
+    z-index: 3;
 }
 
 .profile-placeholder {
