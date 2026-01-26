@@ -184,6 +184,7 @@ body {
     align-items: flex-start;
     position: relative;
     margin-left: -20%;
+    margin-top: -20%;
 }
 
 .hero-content {
@@ -329,6 +330,12 @@ section {
 
 .about-content .skills {
     order: 2;
+}
+
+.about-text {
+    margin-left: 20%;
+    margin-right: 20%;
+    text-align: center;
 }
 
 .about-text p {
@@ -1171,6 +1178,7 @@ section {
     .hero-left-section {
         align-items: center;
         margin-left: 0;
+        margin-top: 0;
     }
 
     .hero-title {
