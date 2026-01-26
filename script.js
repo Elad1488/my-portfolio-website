@@ -699,14 +699,6 @@ function loadHero() {
         if (descElement) descElement.textContent = hero.description;
     }
     
-    // Update Contact Me button with email
-    const contactMeBtn = document.getElementById('contact-me-btn');
-    if (contactMeBtn) {
-        const contact = siteData?.contact || JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
-        const email = contact.email || 'elad1488@gmail.com';
-        contactMeBtn.href = `mailto:${email}`;
-    }
-    
     // Setup GIF slideshow in hero background
     setupHeroGifSlideshow();
 }
