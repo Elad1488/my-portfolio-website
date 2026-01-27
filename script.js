@@ -716,16 +716,46 @@ function setupHeroGifSlideshow() {
         return url;
     }
     
-    // Helper function to check if URL or base64 is a GIF
+    // Helper function to check if URL or base64 is a GIF (strict check)
     function isGif(url) {
         if (!url) return false;
-        const lowerUrl = url.toLowerCase();
-        // Check if it's a base64 GIF
+        const lowerUrl = url.toLowerCase().trim();
+        
+        // Check if it's a base64 GIF - must start with exact MIME type
         if (lowerUrl.startsWith('data:image/gif')) {
+            // Additional check: ensure it's actually a GIF, not just contains "gif" in the string
+            const mimeMatch = lowerUrl.match(/^data:image\/([^;]+)/);
+            if (mimeMatch && mimeMatch[1] === 'gif') {
+                return true;
+            }
+            return false;
+        }
+        
+        // For URLs: check if it ends with .gif or has .gif before query parameters
+        // Remove query parameters and fragments for checking
+        const urlWithoutQuery = lowerUrl.split('?')[0].split('#')[0];
+        
+        // Must end with .gif (not just contain "gif" in path)
+        if (urlWithoutQuery.endsWith('.gif')) {
             return true;
         }
-        // Check if URL ends with .gif or contains .gif
-        return lowerUrl.endsWith('.gif') || lowerUrl.includes('.gif?') || lowerUrl.includes('/gif');
+        
+        // Check for .gif? (with query parameters)
+        if (lowerUrl.includes('.gif?')) {
+            const beforeQuery = lowerUrl.split('?')[0];
+            if (beforeQuery.endsWith('.gif')) {
+                return true;
+            }
+        }
+        
+        // Additional check: ensure it's not a false positive from paths like /gif/ or domain names
+        // Only accept if .gif appears as a file extension
+        const gifPattern = /\.gif(\?|#|$)/i;
+        if (gifPattern.test(lowerUrl)) {
+            return true;
+        }
+        
+        return false;
     }
     
     // Collect images only from Simulation & CAD and 3D printing sections
@@ -740,28 +770,36 @@ function setupHeroGifSlideshow() {
             const isPrinting = sectionName.includes('3d') || sectionName.includes('printing') || sectionName.includes('print');
             
             if (section.items && (isSimulation || isPrinting)) {
-                section.items.forEach(item => {
+                section.items.forEach((item, itemIndex) => {
                     // Check main image (only GIFs)
                     let mainImage = item.imageUrl || item.imageBase64 || '';
                     mainImage = convertGitHubUrl(mainImage);
-                    if (mainImage && isGif(mainImage)) {
-                        if (isSimulation) {
-                            simulationImages.push(mainImage);
-                        } else if (isPrinting) {
-                            printingImages.push(mainImage);
+                    if (mainImage) {
+                        if (isGif(mainImage)) {
+                            if (isSimulation) {
+                                simulationImages.push(mainImage);
+                            } else if (isPrinting) {
+                                printingImages.push(mainImage);
+                            }
+                        } else {
+                            console.warn(`Skipping non-GIF main image from ${section.name} item ${itemIndex}:`, mainImage.substring(0, 100));
                         }
                     }
                     
                     // Check additional images (only GIFs)
                     if (item.additionalImages && Array.isArray(item.additionalImages)) {
-                        item.additionalImages.forEach(additionalImg => {
+                        item.additionalImages.forEach((additionalImg, addIndex) => {
                             let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
                             imgSrc = convertGitHubUrl(imgSrc);
-                            if (imgSrc && isGif(imgSrc)) {
-                                if (isSimulation) {
-                                    simulationImages.push(imgSrc);
-                                } else if (isPrinting) {
-                                    printingImages.push(imgSrc);
+                            if (imgSrc) {
+                                if (isGif(imgSrc)) {
+                                    if (isSimulation) {
+                                        simulationImages.push(imgSrc);
+                                    } else if (isPrinting) {
+                                        printingImages.push(imgSrc);
+                                    }
+                                } else {
+                                    console.warn(`Skipping non-GIF additional image from ${section.name} item ${itemIndex} additional ${addIndex}:`, imgSrc.substring(0, 100));
                                 }
                             }
                         });
@@ -775,14 +813,18 @@ function setupHeroGifSlideshow() {
     const heroSlideshowData = siteData?.heroSlideshow || JSON.parse(localStorage.getItem('portfolio_hero_slideshow') || '[]');
     const dedicatedImages = [];
     if (heroSlideshowData && Array.isArray(heroSlideshowData)) {
-        heroSlideshowData.forEach(img => {
+        heroSlideshowData.forEach((img, index) => {
             let imgSrc = img.imageUrl || img.imageBase64 || '';
             imgSrc = convertGitHubUrl(imgSrc);
-            if (imgSrc && isGif(imgSrc)) {
-                dedicatedImages.push(imgSrc);
+            if (imgSrc) {
+                if (isGif(imgSrc)) {
+                    dedicatedImages.push(imgSrc);
+                } else {
+                    console.warn(`Skipping non-GIF image from dedicated slideshow at index ${index}:`, imgSrc.substring(0, 100));
+                }
             }
         });
-        console.log(`Found ${dedicatedImages.length} dedicated hero slideshow GIFs:`, dedicatedImages);
+        console.log(`Found ${dedicatedImages.length} dedicated hero slideshow GIFs (filtered from ${heroSlideshowData.length} total):`, dedicatedImages);
     }
     
     // Combine images with 80% Simulation, 20% 3D printing ratio
