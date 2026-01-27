@@ -716,11 +716,16 @@ function setupHeroGifSlideshow() {
         return url;
     }
     
-    // Helper function to check if URL is a GIF
+    // Helper function to check if URL or base64 is a GIF
     function isGif(url) {
         if (!url) return false;
         const lowerUrl = url.toLowerCase();
-        return lowerUrl.endsWith('.gif') || lowerUrl.includes('.gif?') || lowerUrl.includes('gif');
+        // Check if it's a base64 GIF
+        if (lowerUrl.startsWith('data:image/gif')) {
+            return true;
+        }
+        // Check if URL ends with .gif or contains .gif
+        return lowerUrl.endsWith('.gif') || lowerUrl.includes('.gif?') || lowerUrl.includes('/gif');
     }
     
     // Collect images only from Simulation & CAD and 3D printing sections
@@ -736,10 +741,10 @@ function setupHeroGifSlideshow() {
             
             if (section.items && (isSimulation || isPrinting)) {
                 section.items.forEach(item => {
-                    // Check main image (accept all images, not just GIFs)
+                    // Check main image (only GIFs)
                     let mainImage = item.imageUrl || item.imageBase64 || '';
                     mainImage = convertGitHubUrl(mainImage);
-                    if (mainImage) {
+                    if (mainImage && isGif(mainImage)) {
                         if (isSimulation) {
                             simulationImages.push(mainImage);
                         } else if (isPrinting) {
@@ -747,12 +752,12 @@ function setupHeroGifSlideshow() {
                         }
                     }
                     
-                    // Check additional images
+                    // Check additional images (only GIFs)
                     if (item.additionalImages && Array.isArray(item.additionalImages)) {
                         item.additionalImages.forEach(additionalImg => {
                             let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
                             imgSrc = convertGitHubUrl(imgSrc);
-                            if (imgSrc) {
+                            if (imgSrc && isGif(imgSrc)) {
                                 if (isSimulation) {
                                     simulationImages.push(imgSrc);
                                 } else if (isPrinting) {
@@ -766,18 +771,18 @@ function setupHeroGifSlideshow() {
         });
     }
     
-    // Add dedicated hero slideshow images from data.json or localStorage FIRST
+    // Add dedicated hero slideshow images from data.json or localStorage FIRST (only GIFs)
     const heroSlideshowData = siteData?.heroSlideshow || JSON.parse(localStorage.getItem('portfolio_hero_slideshow') || '[]');
     const dedicatedImages = [];
     if (heroSlideshowData && Array.isArray(heroSlideshowData)) {
         heroSlideshowData.forEach(img => {
             let imgSrc = img.imageUrl || img.imageBase64 || '';
             imgSrc = convertGitHubUrl(imgSrc);
-            if (imgSrc) {
+            if (imgSrc && isGif(imgSrc)) {
                 dedicatedImages.push(imgSrc);
             }
         });
-        console.log(`Found ${dedicatedImages.length} dedicated hero slideshow images:`, dedicatedImages);
+        console.log(`Found ${dedicatedImages.length} dedicated hero slideshow GIFs:`, dedicatedImages);
     }
     
     // Combine images with 80% Simulation, 20% 3D printing ratio
