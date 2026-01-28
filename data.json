@@ -70,16 +70,16 @@
         "name": "Simulation & CAD",
         "items": [
           {
-            "title": "ATLAS 2.0 after texturing",
-            "description": "Here’s my Atlas digital twin in USD format inside Isaac Sim.\nI manually added some image-based textures just to get a feel for how things could look visually - more of a quick concept than a polished art pass.\nI’m definitely not an expert in texturing, but I think it still turned out pretty cool, what say you?",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/atlas_textured_gif.gif",
+            "title": "ATLAS 2.0 | imported to Isaac Sim as URDF",
+            "description": "",
+            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/ATLAS%20GIF.gif",
             "imageBase64": null,
             "additionalImages": []
           },
           {
-            "title": "ATLAS 2.0 | imported to Isaac Sim as URDF",
-            "description": "",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/ATLAS%20GIF.gif",
+            "title": "ATLAS 2.0 after texturing",
+            "description": "Here’s my Atlas digital twin in USD format inside Isaac Sim.\nI manually added some image-based textures just to get a feel for how things could look visually - more of a quick concept than a polished art pass.\nI’m definitely not an expert in texturing, but I think it still turned out pretty cool, what say you?",
+            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/atlas_textured_gif.gif",
             "imageBase64": null,
             "additionalImages": []
           },
