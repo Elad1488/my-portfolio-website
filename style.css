@@ -1300,6 +1300,17 @@ section {
         grid-template-columns: 1fr;
     }
 
+    .about-text {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        text-align: left !important;
+    }
+
+    .about-text p {
+        line-height: 1.4 !important;
+        margin-bottom: 1rem !important;
+    }
+
     .projects-grid {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 0.5rem !important;
