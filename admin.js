@@ -275,6 +275,7 @@ function extractYouTubeId(url) {
     }
     
     const patterns = [
+        /(?:youtube\.com\/shorts\/)([^&\n?#\/]+)/,  // YouTube Shorts: youtube.com/shorts/VIDEO_ID
         /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
         /youtube\.com\/watch\?.*v=([^&\n?#]+)/
     ];
@@ -839,11 +840,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     return url;
                 }
                 
-                const convertedUrl = convertGitHubUrl(url);
+                // Check if URL is a YouTube Shorts or regular YouTube URL
+                let previewUrl = convertGitHubUrl(url);
+                if (url.includes('youtube.com/shorts/') || url.includes('youtube.com/watch') || url.includes('youtu.be/')) {
+                    const videoId = extractYouTubeId(url);
+                    if (videoId) {
+                        previewUrl = getYouTubeThumbnail(videoId);
+                    }
+                }
+                
                 const preview = document.getElementById('gallery-image-preview');
                 const previewImg = document.getElementById('gallery-preview-img');
                 if (preview && previewImg) {
-                    previewImg.src = convertedUrl;
+                    previewImg.src = previewUrl;
                     preview.style.display = 'block';
                     // Clear base64 when URL is entered
                     currentImageBase64 = null;
@@ -1179,8 +1188,16 @@ function handleImageUpload(event) {
 function saveGalleryItem() {
     const title = document.getElementById('gallery-title').value.trim();
     const description = document.getElementById('gallery-description').value.trim();
-    const imageUrl = document.getElementById('gallery-image-url').value.trim();
+    let imageUrl = document.getElementById('gallery-image-url').value.trim();
     const sectionIndex = parseInt(document.getElementById('gallery-section').value);
+    
+    // If imageUrl is a YouTube Shorts or YouTube URL, convert to thumbnail URL
+    if (imageUrl && (imageUrl.includes('youtube.com/shorts/') || imageUrl.includes('youtube.com/watch') || imageUrl.includes('youtu.be/'))) {
+        const videoId = extractYouTubeId(imageUrl);
+        if (videoId) {
+            imageUrl = getYouTubeThumbnail(videoId);
+        }
+    }
     
     // Validate section selection
     if (sectionIndex === '' || isNaN(sectionIndex)) {

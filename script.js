@@ -435,6 +435,7 @@ function extractYouTubeIdFromUrl(url) {
     }
     
     const patterns = [
+        /(?:youtube\.com\/shorts\/)([^&\n?#\/]+)/,  // YouTube Shorts: youtube.com/shorts/VIDEO_ID
         /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
         /youtube\.com\/watch\?.*v=([^&\n?#]+)/
     ];
@@ -1002,6 +1003,14 @@ function createGalleryItem(item) {
     let imageSrc = item.imageUrl || item.imageBase64 || '';
     imageSrc = convertGitHubUrl(imageSrc);
     
+    // Check if imageSrc is a YouTube Shorts URL and convert to thumbnail
+    if (imageSrc && (imageSrc.includes('youtube.com/shorts/') || imageSrc.includes('youtu.be/') || imageSrc.includes('youtube.com/watch'))) {
+        const videoId = extractYouTubeIdFromUrl(imageSrc);
+        if (videoId) {
+            imageSrc = getYouTubeThumbnail(videoId);
+        }
+    }
+    
     // Collect all images for this item (main + additional)
     const allImages = [];
     if (imageSrc) {
@@ -1012,6 +1021,15 @@ function createGalleryItem(item) {
         item.additionalImages.forEach(additionalImg => {
             let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
             imgSrc = convertGitHubUrl(imgSrc);
+            
+            // Check if additional image is a YouTube Shorts URL and convert to thumbnail
+            if (imgSrc && (imgSrc.includes('youtube.com/shorts/') || imgSrc.includes('youtu.be/') || imgSrc.includes('youtube.com/watch'))) {
+                const videoId = extractYouTubeIdFromUrl(imgSrc);
+                if (videoId) {
+                    imgSrc = getYouTubeThumbnail(videoId);
+                }
+            }
+            
             if (imgSrc) {
                 allImages.push(imgSrc);
             }
