@@ -71,6 +71,24 @@
       "technologies": [],
       "projectUrl": "",
       "sourceUrl": ""
+    },
+    {
+      "name": "Unitree G1 | 4 Minutes to Stability: Reinforcement Learning Converges in Isaac Sim",
+      "description": "Training Unitree G1 in NVIDIA Isaac Sim / Isaac Lab to track a flat velocity command.\n\nInitially, none of the 4096 environments reach the end of the episode.\nFour minutes later, almost all of them do — showing fast RL convergence to stable standing and velocity tracking.\n\nHonestly, I’m really impressed by how fast this converges and by what’s possible today with modern simulation and RL tools.\n\nHardware: Lenovo Legion 7, RTX 5070 Ti\n\n#Robotics #HumanoidRobotics #Unitree #G1 #ReinforcementLearning #DeepRL #IsaacSim #IsaacLab #Simulation #AI #RobotLearning #Locomotion #ControlSystems #GPU #ParallelSimulation #NVIDIA #RTX",
+      "thumbnail": "https://www.youtube.com/shorts/G370gfpZniI",
+      "youtubeUrl": "G370gfpZniI",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "ROS2 on Windows using WSL2 | Real-Time Talker Listener Demo (Proof of Concept)",
+      "description": "Abstract:\nCreated a cross-platform robotics communication stack:\nWindows Host\n   ├── WSL2 (Ubuntu Linux)\n   │       └── ROS 2 (Humble)\n   └── (future) Isaac Sim\n\n\nIn this video, I demonstrate a successful proof of concept of running ROS 2 (Humble) on a Windows machine using WSL2 (Windows Subsystem for Linux).\n\nI installed Ubuntu 22.04 inside WSL2 and set up a full ROS 2 environment. To validate the system, I ran a classic talker/listener demo, where one node publishes data and another node subscribes to it in real time.\n\nThis confirms that:\n\nROS 2 runs correctly inside WSL2\nDDS-based communication is fully functional\nReal-time publish/subscribe messaging works across nodes\n\nThis setup effectively turns a Windows machine into a Linux-based robotics development platform, enabling seamless integration with tools like NVIDIA Isaac Sim.\n\nThis is a foundational step toward building more advanced robotics systems, including:\n\nSimulation-to-ROS integration\nRobot control pipelines\nAI and reinforcement learning workflows\n\nNext step: connecting ROS 2 to Isaac Sim and controlling a robot in simulation.",
+      "thumbnail": "https://www.youtube.com/watch?v=2jjmb1nIar4",
+      "youtubeUrl": "2jjmb1nIar4",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
     }
   ],
   "gallery": {
