@@ -179,7 +179,7 @@
           },
           {
             "title": "Planetary Gear for 1280KV Brushless Motor",
-            "description": "Planetary Gear for 1280KV Brushless Motor",
+            "description": "A single-stage planetary gearbox designed around a 1280KV brushless motor with a 5 mm shaft. The transmission uses one 16-tooth sun gear, three 24-tooth planet gears, and one 64-tooth internal ring gear with module 1.25 and 20° pressure angle. The planets are mounted on a carrier at 120° spacing and rotate inside the internal ring gear. The gearbox provides an approximate 5:1 reduction ratio, increasing the output torque by about 500% while reducing the output speed by 80%. The system is optimized for compact size, smooth motion, and about 0.5 Nm output torque.",
             "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Gear%20Gif.gif",
             "imageBase64": null,
             "additionalImages": []
