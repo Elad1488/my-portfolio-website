@@ -28,10 +28,28 @@
       "sourceUrl": ""
     },
     {
+      "name": "Atlas Dancing to Billie Jean",
+      "description": "I’ve started training Atlas 2.0 (26 DOF) in NVIDIA Isaac Sim. The first milestone I gave it was learning to stand, and the way it solved it was quite interesting and, I’d say, rather iconic.\nI’ll share updates once I manage to shape the reward toward real locomotion.",
+      "thumbnail": "https://www.youtube.com/watch?v=u4Mh3ZgDlng",
+      "youtubeUrl": "u4Mh3ZgDlng",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
       "name": "Wheeled SPOT follows ball DEMO | Nvidia Isaac Sim & Isaac Lab",
       "description": "In this video I demonstrate how I trained a Spot-style quadruped robot using NVIDIA Isaac Sim and Isaac Lab with a curriculum-based reinforcement learning pipeline.\n\nThe robot was trained progressively, starting from basic stability and balance, then learning to drive forward and backward, rotate in place, and finally respond to high-level navigation commands.\nOn top of the low-level locomotion policy, I added a high-level controller that commands the robot to move to target XY positions and chase a moving ball in real time.\n\nThis layered control approach allows the robot to combine learned locomotion with goal-directed navigation, enabling complex autonomous behaviors such as waypoint tracking and dynamic target pursuit.\n\nThe project is inspired by NVIDIA’s Isaac Lab examples and workflows, adapted and extended for a Spot-like robot.\n\n🎥 Reference material and original Isaac Lab demo:\n   • Isaac Lab: Custom Environment Training. A ...",
       "thumbnail": "https://www.youtube.com/watch?v=fRjI1ClDW6k",
       "youtubeUrl": "fRjI1ClDW6k",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "Sphere Bot",
+      "description": "I built a spherical robot using two 800 RPM DC motors with an approximately 23:1 gear reduction.\n\nIf you’d like, I can share a follow-up video covering the full build process — including the CAD design, BOM, mechanical assembly, electronics, and overall development workflow. Let me know in the comments if that’s something you’d be interested in seeing!",
+      "thumbnail": "https://www.youtube.com/watch?v=1ML2Z9HSJ8o",
+      "youtubeUrl": "1ML2Z9HSJ8o",
       "technologies": [],
       "projectUrl": "",
       "sourceUrl": ""
@@ -64,15 +82,6 @@
       "sourceUrl": ""
     },
     {
-      "name": "Atlas Dancing to Billie Jean",
-      "description": "I’ve started training Atlas 2.0 (26 DOF) in NVIDIA Isaac Sim. The first milestone I gave it was learning to stand, and the way it solved it was quite interesting and, I’d say, rather iconic.\nI’ll share updates once I manage to shape the reward toward real locomotion.",
-      "thumbnail": "https://www.youtube.com/watch?v=u4Mh3ZgDlng",
-      "youtubeUrl": "u4Mh3ZgDlng",
-      "technologies": [],
-      "projectUrl": "",
-      "sourceUrl": ""
-    },
-    {
       "name": "Unitree G1 | 4 Minutes to Stability: Reinforcement Learning Converges in Isaac Sim",
       "description": "Training Unitree G1 in NVIDIA Isaac Sim / Isaac Lab to track a flat velocity command.\n\nInitially, none of the 4096 environments reach the end of the episode.\nFour minutes later, almost all of them do — showing fast RL convergence to stable standing and velocity tracking.\n\nHonestly, I’m really impressed by how fast this converges and by what’s possible today with modern simulation and RL tools.\n\nHardware: Lenovo Legion 7, RTX 5070 Ti\n\n#Robotics #HumanoidRobotics #Unitree #G1 #ReinforcementLearning #DeepRL #IsaacSim #IsaacLab #Simulation #AI #RobotLearning #Locomotion #ControlSystems #GPU #ParallelSimulation #NVIDIA #RTX",
       "thumbnail": "https://www.youtube.com/shorts/G370gfpZniI",
@@ -86,15 +95,6 @@
       "description": "Abstract:\nCreated a cross-platform robotics communication stack:\nWindows Host\n   ├── WSL2 (Ubuntu Linux)\n   │       └── ROS 2 (Humble)\n   └── (future) Isaac Sim\n\n\nIn this video, I demonstrate a successful proof of concept of running ROS 2 (Humble) on a Windows machine using WSL2 (Windows Subsystem for Linux).\n\nI installed Ubuntu 22.04 inside WSL2 and set up a full ROS 2 environment. To validate the system, I ran a classic talker/listener demo, where one node publishes data and another node subscribes to it in real time.\n\nThis confirms that:\n\nROS 2 runs correctly inside WSL2\nDDS-based communication is fully functional\nReal-time publish/subscribe messaging works across nodes\n\nThis setup effectively turns a Windows machine into a Linux-based robotics development platform, enabling seamless integration with tools like NVIDIA Isaac Sim.\n\nThis is a foundational step toward building more advanced robotics systems, including:\n\nSimulation-to-ROS integration\nRobot control pipelines\nAI and reinforcement learning workflows\n\nNext step: connecting ROS 2 to Isaac Sim and controlling a robot in simulation.",
       "thumbnail": "https://www.youtube.com/watch?v=2jjmb1nIar4",
       "youtubeUrl": "2jjmb1nIar4",
-      "technologies": [],
-      "projectUrl": "",
-      "sourceUrl": ""
-    },
-    {
-      "name": "Sphere Bot",
-      "description": "I built a spherical robot using two 800 RPM DC motors with an approximately 23:1 gear reduction.\n\nIf you’d like, I can share a follow-up video covering the full build process — including the CAD design, BOM, mechanical assembly, electronics, and overall development workflow. Let me know in the comments if that’s something you’d be interested in seeing!",
-      "thumbnail": "https://www.youtube.com/watch?v=1ML2Z9HSJ8o",
-      "youtubeUrl": "1ML2Z9HSJ8o",
       "technologies": [],
       "projectUrl": "",
       "sourceUrl": ""
