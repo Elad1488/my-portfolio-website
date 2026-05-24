@@ -93,7 +93,7 @@
     {
       "name": "Sphere Bot",
       "description": "I built a spherical robot using two 800 RPM DC motors with an approximately 23:1 gear reduction.\n\nIf you’d like, I can share a follow-up video covering the full build process — including the CAD design, BOM, mechanical assembly, electronics, and overall development workflow. Let me know in the comments if that’s something you’d be interested in seeing!",
-      "thumbnail": "",
+      "thumbnail": "https://www.youtube.com/watch?v=1ML2Z9HSJ8o",
       "youtubeUrl": "1ML2Z9HSJ8o",
       "technologies": [],
       "projectUrl": "",
