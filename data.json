@@ -37,19 +37,19 @@
       "sourceUrl": ""
     },
     {
-      "name": "Wheeled SPOT follows ball DEMO | Nvidia Isaac Sim & Isaac Lab",
-      "description": "In this video I demonstrate how I trained a Spot-style quadruped robot using NVIDIA Isaac Sim and Isaac Lab with a curriculum-based reinforcement learning pipeline.\n\nThe robot was trained progressively, starting from basic stability and balance, then learning to drive forward and backward, rotate in place, and finally respond to high-level navigation commands.\nOn top of the low-level locomotion policy, I added a high-level controller that commands the robot to move to target XY positions and chase a moving ball in real time.\n\nThis layered control approach allows the robot to combine learned locomotion with goal-directed navigation, enabling complex autonomous behaviors such as waypoint tracking and dynamic target pursuit.\n\nThe project is inspired by NVIDIA’s Isaac Lab examples and workflows, adapted and extended for a Spot-like robot.\n\n🎥 Reference material and original Isaac Lab demo:\n   • Isaac Lab: Custom Environment Training. A ...",
-      "thumbnail": "https://www.youtube.com/watch?v=fRjI1ClDW6k",
-      "youtubeUrl": "fRjI1ClDW6k",
+      "name": "Sphere Bot",
+      "description": "I built a spherical robot using two 800 RPM DC motors with an approximately 23:1 gear reduction.\n\nIf you’d like, I can share a follow-up video covering the full build process — including the CAD design, BOM, mechanical assembly, electronics, and overall development workflow. Let me know in the comments if that’s something you’d be interested in seeing!",
+      "thumbnail": "https://www.youtube.com/watch?v=1ML2Z9HSJ8o",
+      "youtubeUrl": "1ML2Z9HSJ8o",
       "technologies": [],
       "projectUrl": "",
       "sourceUrl": ""
     },
     {
-      "name": "Sphere Bot",
-      "description": "I built a spherical robot using two 800 RPM DC motors with an approximately 23:1 gear reduction.\n\nIf you’d like, I can share a follow-up video covering the full build process — including the CAD design, BOM, mechanical assembly, electronics, and overall development workflow. Let me know in the comments if that’s something you’d be interested in seeing!",
-      "thumbnail": "https://www.youtube.com/watch?v=1ML2Z9HSJ8o",
-      "youtubeUrl": "1ML2Z9HSJ8o",
+      "name": "Wheeled SPOT follows ball DEMO | Nvidia Isaac Sim & Isaac Lab",
+      "description": "In this video I demonstrate how I trained a Spot-style quadruped robot using NVIDIA Isaac Sim and Isaac Lab with a curriculum-based reinforcement learning pipeline.\n\nThe robot was trained progressively, starting from basic stability and balance, then learning to drive forward and backward, rotate in place, and finally respond to high-level navigation commands.\nOn top of the low-level locomotion policy, I added a high-level controller that commands the robot to move to target XY positions and chase a moving ball in real time.\n\nThis layered control approach allows the robot to combine learned locomotion with goal-directed navigation, enabling complex autonomous behaviors such as waypoint tracking and dynamic target pursuit.\n\nThe project is inspired by NVIDIA’s Isaac Lab examples and workflows, adapted and extended for a Spot-like robot.\n\n🎥 Reference material and original Isaac Lab demo:\n   • Isaac Lab: Custom Environment Training. A ...",
+      "thumbnail": "https://www.youtube.com/watch?v=fRjI1ClDW6k",
+      "youtubeUrl": "fRjI1ClDW6k",
       "technologies": [],
       "projectUrl": "",
       "sourceUrl": ""
