@@ -46,6 +46,15 @@
       "sourceUrl": ""
     },
     {
+      "name": "EG-209 | Bipedal Walker",
+      "description": "I took a biped robot from a raw URDF/USD-style asset to a working reinforcement learning locomotion simulation in NVIDIA Isaac Sim / Isaac Lab.\n\nThe pipeline included building usable collisions and articulation, defining an 8-DOF biped RL environment, training PPO across hundreds of parallel environments, and shaping rewards for stable, cyclic, left-right coordinated walking.\n\nThe policy has currently converged to a stable backward walk.\n\nSo yes, it walks. It just walks with a bit of moonwalk energy.\n\nStill, that’s a real milestone: raw robot geometry → physics simulation → full episode completion → repeatable learned locomotion.\n\nNext step: fix directionality and keep improving the gait toward forward, balanced, symmetric humanoid walking.",
+      "thumbnail": "https://www.youtube.com/watch?v=EUwbozUuGk0",
+      "youtubeUrl": "EUwbozUuGk0",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
       "name": "Standing Still → Driving Forward | NVIDIA Isaac Sim & Isaac Lab",
       "description": "In this video I showcase a wheeled Spot robot (Boston Dynamics Spot ) that I trained using NVIDIA Isaac Sim and Isaac Lab with reinforcement learning.\n\nThe robot was trained through a curriculum to learn multiple low-level behaviors, including:\n\nStanding stably in place\n\nDriving forward on its wheels\n\nEach of these behaviors was learned as a separate policy. On top of that, I implemented a high-level controller that dynamically switches between these learned policies in real time. This allows the robot to transition smoothly between standing and driving forward based on the task it needs to perform.\n\nThis demonstrates a key capability of modern robot learning systems: composing multiple learned skills into a single high-level controller, enabling more complex and flexible autonomous behavior than any single policy could achieve alone.\n\nAll training and evaluation were performed inside NVIDIA Isaac Sim and Isaac Lab, using physics-based simulation and reinforcement learning to produce stable, transferable robot behaviors.",
       "thumbnail": "https://www.youtube.com/watch?v=OYZcEDcnmxA&feature=youtu.be",
