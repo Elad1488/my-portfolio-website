@@ -28,6 +28,15 @@
       "sourceUrl": ""
     },
     {
+      "name": "EG-209 | Bipedal Walker",
+      "description": "I took a biped robot from a raw URDF/USD-style asset to a working reinforcement learning locomotion simulation in NVIDIA Isaac Sim / Isaac Lab.\n\nThe pipeline included building usable collisions and articulation, defining an 8-DOF biped RL environment, training PPO across hundreds of parallel environments, and shaping rewards for stable, cyclic, left-right coordinated walking.\n\nThe policy has currently converged to a stable backward walk.\n\nSo yes, it walks. It just walks with a bit of moonwalk energy.\n\nStill, that’s a real milestone: raw robot geometry → physics simulation → full episode completion → repeatable learned locomotion.\n\nNext step: fix directionality and keep improving the gait toward forward, balanced, symmetric humanoid walking.",
+      "thumbnail": "https://www.youtube.com/watch?v=EUwbozUuGk0",
+      "youtubeUrl": "EUwbozUuGk0",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
       "name": "Atlas Dancing to Billie Jean",
       "description": "I’ve started training Atlas 2.0 (26 DOF) in NVIDIA Isaac Sim. The first milestone I gave it was learning to stand, and the way it solved it was quite interesting and, I’d say, rather iconic.\nI’ll share updates once I manage to shape the reward toward real locomotion.",
       "thumbnail": "https://www.youtube.com/watch?v=u4Mh3ZgDlng=youtu.be",
@@ -41,15 +50,6 @@
       "description": "In this video I demonstrate how I trained a Spot-style quadruped robot using NVIDIA Isaac Sim and Isaac Lab with a curriculum-based reinforcement learning pipeline.\n\nThe robot was trained progressively, starting from basic stability and balance, then learning to drive forward and backward, rotate in place, and finally respond to high-level navigation commands.\nOn top of the low-level locomotion policy, I added a high-level controller that commands the robot to move to target XY positions and chase a moving ball in real time.\n\nThis layered control approach allows the robot to combine learned locomotion with goal-directed navigation, enabling complex autonomous behaviors such as waypoint tracking and dynamic target pursuit.\n\nThe project is inspired by NVIDIA’s Isaac Lab examples and workflows, adapted and extended for a Spot-like robot.\n\n🎥 Reference material and original Isaac Lab demo:\n   • Isaac Lab: Custom Environment Training. A ...",
       "thumbnail": "https://www.youtube.com/watch?v=fRjI1ClDW6k",
       "youtubeUrl": "fRjI1ClDW6k",
-      "technologies": [],
-      "projectUrl": "",
-      "sourceUrl": ""
-    },
-    {
-      "name": "EG-209 | Bipedal Walker",
-      "description": "I took a biped robot from a raw URDF/USD-style asset to a working reinforcement learning locomotion simulation in NVIDIA Isaac Sim / Isaac Lab.\n\nThe pipeline included building usable collisions and articulation, defining an 8-DOF biped RL environment, training PPO across hundreds of parallel environments, and shaping rewards for stable, cyclic, left-right coordinated walking.\n\nThe policy has currently converged to a stable backward walk.\n\nSo yes, it walks. It just walks with a bit of moonwalk energy.\n\nStill, that’s a real milestone: raw robot geometry → physics simulation → full episode completion → repeatable learned locomotion.\n\nNext step: fix directionality and keep improving the gait toward forward, balanced, symmetric humanoid walking.",
-      "thumbnail": "https://www.youtube.com/watch?v=EUwbozUuGk0",
-      "youtubeUrl": "EUwbozUuGk0",
       "technologies": [],
       "projectUrl": "",
       "sourceUrl": ""
