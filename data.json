@@ -350,7 +350,11 @@
       "imageBase64": null
     },
     {
-      "imageUrl": "",
+      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/StarShip%20Troopers.gif",
+      "imageBase64": null
+    },
+    {
+      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/BIPEDAL%20WALKER%20ISAAC%20SIM3.gif",
       "imageBase64": null
     }
   ]
