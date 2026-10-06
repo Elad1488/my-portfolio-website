@@ -1,3 +1,17 @@
+# Publishing (current workflow)
+
+1. Open the admin from the live site: `https://elad1488.github.io/my-portfolio-website/admin.html`
+2. First time only: click 🔑 and paste a fine-grained GitHub token
+   (github.com/settings/personal-access-tokens/new → only repo `my-portfolio-website` → Contents: Read and write).
+3. Edit / drag images and GIFs onto the Gallery tab.
+4. Click **Publish to Site**. data.json and new images (saved to `media/`) are committed to `main` in one commit,
+   and the Pages workflow redeploys in ~1 minute. No export, no GitHub Desktop.
+
+The admin always loads data.json from GitHub, so it can't overwrite newer content with an old browser copy.
+If data.json changed on GitHub after the admin was opened, Publish refuses — reload and redo the change.
+
+---
+
 # Portfolio Manager - Admin Guide
 
 ## 🎯 Overview

@@ -16,10 +16,13 @@
             <h1>Portfolio Manager</h1>
             <div class="header-actions">
                 <a href="index.html" class="btn-view-site" target="_blank">View Site</a>
-                <button class="btn-export" onclick="exportAllData()" title="Export data to JSON file">Export Data</button>
-                <button class="btn-import" onclick="importDataFromFile()" title="Import data from JSON file">Import Data</button>
                 <button class="btn-save-all" onclick="saveAllData()">Save All Changes</button>
+                <button class="btn-export" id="btn-publish" onclick="sync.publish()" title="Commit data.json and new images to GitHub; the site redeploys automatically">Publish to Site</button>
+                <button class="btn-import" onclick="exportAllData()" title="Download a backup copy of data.json">Backup</button>
+                <button class="btn-import" onclick="importDataFromFile()" title="Load data from a JSON backup (then Publish)">Import</button>
+                <button class="btn-view-site" onclick="sync.askToken()" title="Set the GitHub token used for publishing">🔑</button>
             </div>
+            <div id="sync-status" class="sync-status"></div>
         </header>
 
         <!-- Tabs -->
@@ -293,6 +296,7 @@
         </div>
     </div>
 
+    <script src="github-sync.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

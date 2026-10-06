@@ -93,8 +93,7 @@ if (contactForm) {
         const email = formData.get('email');
         const message = formData.get('message');
         
-        // Get your email from localStorage or use default
-        const contact = JSON.parse(localStorage.getItem('portfolio_contact') || '{}');
+        const contact = siteData?.contact || {};
         const yourEmail = contact.email || 'elad1488@gmail.com';
         
         // Disable submit button and show loading
@@ -228,128 +227,25 @@ window.addEventListener('load', () => {
 
 // ========== DYNAMIC CONTENT LOADING ==========
 
-// Load data from JSON file - data.json is the primary source, localStorage is only used as fallback
+// Load data from data.json - the single source of truth (edited via admin.html → Publish)
 let siteData = null;
 
 async function loadDataFromFile() {
     try {
-        const response = await fetch('data.json');
-        if (response.ok) {
-            siteData = await response.json();
-            console.log('✅ Loaded data.json successfully:', siteData);
-            console.log('Projects count:', siteData.projects?.length || 0);
-            
-            // data.json is the PRIMARY source for live site (shared across all visitors)
-            // localStorage is only used as fallback if data.json is empty or missing
-            // This allows admin to edit via localStorage, then export to update data.json
-            if (siteData.projects && siteData.projects.length > 0) {
-                // Use data.json if it has projects - this is what visitors see on live site
-                // Don't overwrite with localStorage - data.json is the source of truth for public site
-                console.log('Using projects from data.json:', siteData.projects.length);
-            } else {
-                // Fallback to localStorage only if data.json is empty
-                console.log('data.json has no projects, checking localStorage...');
-                const storedProjects = localStorage.getItem('portfolio_projects');
-                if (storedProjects) {
-                    try {
-                        const parsed = JSON.parse(storedProjects);
-                        if (parsed && parsed.length > 0) {
-                            siteData.projects = parsed;
-                            console.log('Using projects from localStorage (fallback):', parsed.length);
-                        } else {
-                            siteData.projects = [];
-                            console.log('localStorage projects array is empty');
-                        }
-                    } catch (e) {
-                        console.error('Error parsing projects from localStorage:', e);
-                        siteData.projects = [];
-                    }
-                } else {
-                    siteData.projects = [];
-                    console.log('No projects in localStorage either');
-                }
-            }
-            
-            // data.json is the PRIMARY source for live site
-            // localStorage is only used as fallback if data.json is empty
-            if (siteData.gallery && (siteData.gallery.sections?.length > 0 || Object.keys(siteData.gallery).length > 1)) {
-                // Use data.json if it has gallery data
-                console.log('Using gallery from data.json:', siteData.gallery.sections?.length || 0, 'sections');
-            } else {
-                // Fallback to localStorage only if data.json is empty
-                console.log('data.json has no gallery, checking localStorage...');
-                const storedGallery = localStorage.getItem('portfolio_gallery');
-                if (storedGallery && storedGallery !== '{"sections":[]}') {
-                    try {
-                        siteData.gallery = JSON.parse(storedGallery);
-                        console.log('Using gallery from localStorage (fallback):', siteData.gallery.sections?.length || 0, 'sections');
-                    } catch (e) {
-                        console.error('Error parsing gallery from localStorage:', e);
-                        siteData.gallery = { sections: [] };
-                    }
-                } else {
-                    siteData.gallery = { sections: [] };
-                    console.log('No gallery in localStorage either');
-                }
-            }
-            
-            // For about: localStorage takes priority (user can edit via admin)
-            const storedAbout = localStorage.getItem('portfolio_about');
-            if (storedAbout && storedAbout !== '{"text1":"","text2":""}') {
-                siteData.about = JSON.parse(storedAbout);
-            } else if (siteData.about && (siteData.about.text1 || siteData.about.text2)) {
-                // Use data.json only if localStorage is empty
-                localStorage.setItem('portfolio_about', JSON.stringify(siteData.about));
-            }
-            
-            // For skills: localStorage takes priority (user can add via admin)
-            const storedSkills = localStorage.getItem('portfolio_skills');
-            if (storedSkills && storedSkills !== '[]') {
-                siteData.skills = JSON.parse(storedSkills);
-            } else if (siteData.skills && siteData.skills.length > 0) {
-                // Use data.json only if localStorage is empty
-                localStorage.setItem('portfolio_skills', JSON.stringify(siteData.skills));
-            }
-            
-            // For contact: localStorage takes priority (user can edit via admin)
-            const storedContact = localStorage.getItem('portfolio_contact');
-            if (storedContact && storedContact !== '{}') {
-                siteData.contact = JSON.parse(storedContact);
-            } else if (siteData.contact && Object.keys(siteData.contact).length > 0) {
-                // Use data.json only if localStorage is empty
-                localStorage.setItem('portfolio_contact', JSON.stringify(siteData.contact));
-            }
-            
-            // For hero: localStorage takes priority (user can edit via admin)
-            // data.json is only used as default if localStorage is empty
-            const storedHero = localStorage.getItem('portfolio_hero');
-            if (storedHero && storedHero !== '{}') {
-                const parsedHero = JSON.parse(storedHero);
-                if (parsedHero.name || parsedHero.subtitle || parsedHero.description) {
-                    siteData.hero = parsedHero;
-                }
-            } else if (siteData.hero && (siteData.hero.name || siteData.hero.subtitle || siteData.hero.description)) {
-                // Use data.json only if localStorage is empty
-                localStorage.setItem('portfolio_hero', JSON.stringify(siteData.hero));
-            }
-            
-            // IMPORTANT: Don't clear localStorage on live site - users can edit content via admin panel
-            // localStorage stores user-edited content, data.json is only the initial/default data
-            // Only merge: use data.json values if localStorage is empty, otherwise keep localStorage
-        }
+        const response = await fetch('data.json', { cache: 'no-cache' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        siteData = await response.json();
     } catch (error) {
-        console.error('❌ Could not load data.json, using localStorage only:', error);
-        // Fallback to localStorage if data.json fails
-        siteData = {
-            projects: JSON.parse(localStorage.getItem('portfolio_projects') || '[]'),
-            gallery: JSON.parse(localStorage.getItem('portfolio_gallery') || '{"sections":[]}'),
-            about: JSON.parse(localStorage.getItem('portfolio_about') || '{"text1":"","text2":""}'),
-            skills: JSON.parse(localStorage.getItem('portfolio_skills') || '[]'),
-            contact: JSON.parse(localStorage.getItem('portfolio_contact') || '{}'),
-            hero: JSON.parse(localStorage.getItem('portfolio_hero') || '{}')
-        };
-        console.log('Using localStorage as fallback, projects count:', siteData.projects?.length || 0);
+        console.error('❌ Could not load data.json:', error);
+        siteData = {};
     }
+    siteData.projects = siteData.projects || [];
+    siteData.gallery = siteData.gallery || { sections: [] };
+    siteData.about = siteData.about || { text1: '', text2: '' };
+    siteData.skills = siteData.skills || [];
+    siteData.contact = siteData.contact || {};
+    siteData.hero = siteData.hero || {};
+    siteData.heroSlideshow = siteData.heroSlideshow || [];
 }
 
 async function loadDynamicContent() {

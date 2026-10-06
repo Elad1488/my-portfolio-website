@@ -20,17 +20,43 @@ let currentImageBase64 = null;
 let additionalImages = []; // Array of {imageUrl, imageBase64} for additional gallery images
 
 // Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await sync.load(); // data.json from GitHub is the source of truth
     cleanupYouTubeThumbnails(); // Clean up any YouTube thumbnails saved in thumbnail field
     loadAllData();
     initializeDragAndDrop();
     loadGallery();
     loadHeroSlideshow();
+    initializeFileDrop();
 });
+
+// Drop an image/GIF anywhere on the Gallery tab to add it (or onto the open gallery modal to set its image)
+function initializeFileDrop() {
+    const isFileDrag = (e) => e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files');
+    document.addEventListener('dragover', (e) => {
+        if (isFileDrag(e)) e.preventDefault();
+    });
+    document.addEventListener('drop', (e) => {
+        if (!isFileDrag(e)) return;
+        e.preventDefault();
+        if (e.target.closest && e.target.closest('input[type="file"]')) return; // native input handles it
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+        const modalOpen = document.getElementById('gallery-modal').classList.contains('active');
+        const galleryTab = document.getElementById('gallery-tab').classList.contains('active');
+        if (!modalOpen && !galleryTab) return;
+        if (!modalOpen) {
+            addNewGalleryItem();
+            const title = document.getElementById('gallery-title');
+            if (title && !title.value) title.value = file.name.replace(/\.[^.]+$/, '');
+        }
+        handleImageUpload({ target: { files: [file] } });
+    });
+}
 
 // Clean up YouTube thumbnail URLs from thumbnail field (one-time cleanup)
 function cleanupYouTubeThumbnails() {
-    const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+    const projects = JSON.parse(store.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     let needsUpdate = false;
     
     projects.forEach(project => {
@@ -41,7 +67,7 @@ function cleanupYouTubeThumbnails() {
     });
     
     if (needsUpdate) {
-        localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+        store.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
     }
 }
 
@@ -80,7 +106,7 @@ function switchTab(tabName) {
 // ========== PROJECTS MANAGEMENT ==========
 
 function loadProjects() {
-    const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+    const projects = JSON.parse(store.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     const projectsList = document.getElementById('projects-list');
     projectsList.innerHTML = '';
     
@@ -171,7 +197,7 @@ function addNewProject() {
 }
 
 function editProject(index) {
-    const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+    const projects = JSON.parse(store.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     const project = projects[index];
     
     if (!project) return;
@@ -204,7 +230,7 @@ function saveProject() {
         return;
     }
     
-    const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+    const projects = JSON.parse(store.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     const youtubeUrl = document.getElementById('project-youtube').value.trim();
     const youtubeId = extractYouTubeId(youtubeUrl);
     let thumbnail = document.getElementById('project-thumbnail').value.trim();
@@ -233,18 +259,18 @@ function saveProject() {
         projects[currentEditingIndex] = project;
     }
     
-    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+    store.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
     loadProjects();
     closeProjectModal();
-    showSuccess('✅ Project saved successfully! Remember to export data.json to update the live site.');
+    showSuccess('✅ Project saved successfully! Click "Publish to Site" to make it live.');
 }
 
 function deleteProject(index) {
     if (!confirm('Are you sure you want to delete this project?')) return;
     
-    const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+    const projects = JSON.parse(store.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     projects.splice(index, 1);
-    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+    store.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
     loadProjects();
     showSuccess('Project deleted successfully!');
 }
@@ -322,7 +348,7 @@ function initializeDragAndDrop() {
             projectsList.classList.remove('drag-over');
             
             if (draggedElement) {
-                const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+                const projects = JSON.parse(store.getItem(STORAGE_KEYS.PROJECTS) || '[]');
                 const children = Array.from(projectsList.children);
                 const fromIndex = parseInt(draggedElement.dataset.index);
                 
@@ -340,7 +366,7 @@ function initializeDragAndDrop() {
                     const [moved] = projects.splice(fromIndex, 1);
                     projects.splice(toIndex, 0, moved);
                     
-                    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+                    store.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
                     loadProjects();
                     showSuccess('Project order updated!');
                 }
@@ -397,7 +423,7 @@ function handleDrop(e) {
     
     if (!draggedElement) return false;
     
-    const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+    const projects = JSON.parse(store.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     const projectsList = document.getElementById('projects-list');
     const children = Array.from(projectsList.children);
     const fromIndex = parseInt(draggedElement.dataset.index);
@@ -418,7 +444,7 @@ function handleDrop(e) {
         const [moved] = projects.splice(fromIndex, 1);
         projects.splice(toIndex, 0, moved);
         
-        localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+        store.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
         loadProjects();
         showSuccess('Project order updated!');
     }
@@ -633,7 +659,7 @@ function getGalleryDragAfterElement(container, y) {
 // ========== ABOUT & SKILLS ==========
 
 function loadAbout() {
-    const about = JSON.parse(localStorage.getItem(STORAGE_KEYS.ABOUT) || '{"text1": "", "text2": ""}');
+    const about = JSON.parse(store.getItem(STORAGE_KEYS.ABOUT) || '{"text1": "", "text2": ""}');
     document.getElementById('about-text-1').value = about.text1 || '';
     document.getElementById('about-text-2').value = about.text2 || '';
 }
@@ -643,12 +669,12 @@ function saveAbout() {
         text1: document.getElementById('about-text-1').value,
         text2: document.getElementById('about-text-2').value
     };
-    localStorage.setItem(STORAGE_KEYS.ABOUT, JSON.stringify(about));
+    store.setItem(STORAGE_KEYS.ABOUT, JSON.stringify(about));
     // Note: User needs to export data.json to update live site
 }
 
 function loadSkills() {
-    const skills = JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]');
+    const skills = JSON.parse(store.getItem(STORAGE_KEYS.SKILLS) || '[]');
     const skillsList = document.getElementById('skills-list');
     skillsList.innerHTML = '';
     
@@ -664,29 +690,29 @@ function loadSkills() {
 }
 
 function addSkill() {
-    const skills = JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]');
+    const skills = JSON.parse(store.getItem(STORAGE_KEYS.SKILLS) || '[]');
     skills.push('New Skill');
-    localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
+    store.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
     loadSkills();
 }
 
 function updateSkill(index, value) {
-    const skills = JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]');
+    const skills = JSON.parse(store.getItem(STORAGE_KEYS.SKILLS) || '[]');
     skills[index] = value.trim();
-    localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
+    store.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
 }
 
 function removeSkill(index) {
-    const skills = JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]');
+    const skills = JSON.parse(store.getItem(STORAGE_KEYS.SKILLS) || '[]');
     skills.splice(index, 1);
-    localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
+    store.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
     loadSkills();
 }
 
 // ========== CONTACT ==========
 
 function loadContact() {
-    let contact = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT) || '{}');
+    let contact = JSON.parse(store.getItem(STORAGE_KEYS.CONTACT) || '{}');
     
     // Set defaults if not already set
     if (!contact.email) {
@@ -697,8 +723,8 @@ function loadContact() {
     }
     
     // Save defaults if they were just set
-    if (!localStorage.getItem(STORAGE_KEYS.CONTACT)) {
-        localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(contact));
+    if (!store.getItem(STORAGE_KEYS.CONTACT)) {
+        store.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(contact));
     }
     
     document.getElementById('contact-email').value = contact.email || '';
@@ -716,14 +742,14 @@ function saveContact() {
         github: document.getElementById('contact-github').value,
         twitter: document.getElementById('contact-twitter').value
     };
-    localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(contact));
+    store.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(contact));
     // Note: User needs to export data.json to update live site
 }
 
 // ========== HERO ==========
 
 function loadHero() {
-    const hero = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO) || '{}');
+    const hero = JSON.parse(store.getItem(STORAGE_KEYS.HERO) || '{}');
     document.getElementById('hero-name').value = hero.name || '';
     document.getElementById('hero-subtitle').value = hero.subtitle || '';
     document.getElementById('hero-description').value = hero.description || '';
@@ -735,7 +761,7 @@ function saveHero() {
         subtitle: document.getElementById('hero-subtitle').value,
         description: document.getElementById('hero-description').value
     };
-    localStorage.setItem(STORAGE_KEYS.HERO, JSON.stringify(hero));
+    store.setItem(STORAGE_KEYS.HERO, JSON.stringify(hero));
     // Note: User needs to export data.json to update live site
 }
 
@@ -750,7 +776,7 @@ function convertGitHubUrl(url) {
 }
 
 function loadHeroSlideshow() {
-    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
     const list = document.getElementById('hero-slideshow-list');
     if (!list) return;
     list.innerHTML = '';
@@ -778,19 +804,19 @@ function loadHeroSlideshow() {
 }
 
 function addHeroSlideshowImage() {
-    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
     images.push({ imageUrl: '', imageBase64: null });
-    localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+    store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
     loadHeroSlideshow();
 }
 
 function updateHeroSlideshowImage(index) {
-    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
     const urlInput = document.getElementById(`hero-slideshow-url-${index}`);
     if (urlInput && images[index]) {
         images[index].imageUrl = urlInput.value;
         images[index].imageBase64 = null; // Clear base64 when URL is set
-        localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+        store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
         loadHeroSlideshow();
     }
 }
@@ -801,11 +827,11 @@ function handleHeroSlideshowUpload(index, event) {
     
     const reader = new FileReader();
     reader.onload = (e) => {
-        const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+        const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
         if (images[index]) {
             images[index].imageBase64 = e.target.result;
             images[index].imageUrl = ''; // Clear URL when base64 is set
-            localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+            store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
             loadHeroSlideshow();
         }
     };
@@ -813,9 +839,9 @@ function handleHeroSlideshowUpload(index, event) {
 }
 
 function removeHeroSlideshowImage(index) {
-    const images = JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
     images.splice(index, 1);
-    localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+    store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
     loadHeroSlideshow();
 }
 
@@ -882,7 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Migrate old gallery format to new sections format
 function migrateGalleryData() {
-    const oldGallery = localStorage.getItem(STORAGE_KEYS.GALLERY);
+    const oldGallery = store.getItem(STORAGE_KEYS.GALLERY);
     if (!oldGallery) return;
     
     try {
@@ -898,10 +924,10 @@ function migrateGalleryData() {
                     items: parsed
                 }]
             };
-            localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(newFormat));
+            store.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(newFormat));
         } else if (Array.isArray(parsed) && parsed.length === 0) {
             // Empty array, initialize with new format
-            localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify({ sections: [] }));
+            store.setItem(STORAGE_KEYS.GALLERY, JSON.stringify({ sections: [] }));
         }
     } catch (e) {
         console.error('Error migrating gallery data:', e);
@@ -910,7 +936,7 @@ function migrateGalleryData() {
 
 function getGalleryData() {
     migrateGalleryData();
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.GALLERY) || '{"sections":[]}');
+    const data = JSON.parse(store.getItem(STORAGE_KEYS.GALLERY) || '{"sections":[]}');
     if (!data.sections) {
         data.sections = [];
     }
@@ -918,7 +944,7 @@ function getGalleryData() {
 }
 
 function saveGalleryData(data) {
-    localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(data));
+    store.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(data));
 }
 
 function loadGallery() {
@@ -1228,20 +1254,6 @@ function saveGalleryItem() {
         }
     }
     
-    // Check if base64 is too large for localStorage (warn but allow)
-    if (currentImageBase64) {
-        const base64Size = currentImageBase64.length;
-        const sizeInMB = (base64Size / (1024 * 1024)).toFixed(2);
-        
-        // localStorage typically has 5-10MB limit, warn if approaching
-        if (base64Size > 3 * 1024 * 1024) { // 3MB base64
-            const proceed = confirm(`Warning: This file is large (${sizeInMB} MB). Large files may not save properly in browser storage. Consider using an image URL instead. Do you want to continue?`);
-            if (!proceed) {
-                return;
-            }
-        }
-    }
-    
     try {
         // Filter out empty additional images (no URL and no base64)
         const validAdditionalImages = (additionalImages || []).filter(img => {
@@ -1294,7 +1306,6 @@ function saveGalleryItem() {
             galleryData.sections[sectionIndex].items.push(item);
         }
         
-        // Try to save to localStorage
         saveGalleryData(galleryData);
         
         console.log('Saved gallery item:', item);
@@ -1302,7 +1313,7 @@ function saveGalleryItem() {
         
         loadGallery();
         closeGalleryModal();
-        showSuccess('✅ Gallery image saved! Remember to export data.json to update the live site.');
+        showSuccess('✅ Gallery image saved! Click "Publish to Site" to make it live.');
     } catch (error) {
         console.error('Error saving gallery item:', error);
         if (error.name === 'QuotaExceededError' || error.message.includes('quota')) {
@@ -1604,22 +1615,12 @@ function saveAllData() {
     saveAbout();
     saveContact();
     saveHero();
-    showSuccess('✅ All changes saved to localStorage! Click "Export Data" to update data.json for the live site.');
+    showSuccess('✅ Changes saved. Click "Publish to Site" to make them live.');
 }
 
-// Export all data to JSON (for updating data.json file)
+// Download a backup copy of the current data (publishing is done with "Publish to Site")
 function exportAllData() {
-    const data = {
-        projects: JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]'),
-        gallery: JSON.parse(localStorage.getItem(STORAGE_KEYS.GALLERY) || '{"sections":[]}'),
-        about: JSON.parse(localStorage.getItem(STORAGE_KEYS.ABOUT) || '{"text1":"","text2":""}'),
-        skills: JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]'),
-        contact: JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT) || '{}'),
-        hero: JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO) || '{}'),
-        heroSlideshow: JSON.parse(localStorage.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]')
-    };
-    
-    const jsonString = JSON.stringify(data, null, 2);
+    const jsonString = JSON.stringify(sync.collectData(), null, 2);
     
     // Create download link
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -1631,30 +1632,7 @@ function exportAllData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    // Show detailed instructions
-    const instructions = `
-✅ הקובץ data.json הורד!
-
-📋 כדי שהשינויים יופיעו באתר האונליין:
-
-1. פתח את GitHub Desktop או את התיקייה המקומית שלך
-2. העתק את הקובץ data.json שהורדת לתיקייה:
-   C:\\myWebsite\\my-portfolio-website\\data.json
-   
-   (החלף את הקובץ הקיים)
-
-3. ב-GitHub Desktop:
-   - Commit את השינוי
-   - Push ל-GitHub
-   
-4. חכה 1-2 דקות - האתר יתעדכן אוטומטית!
-
-💡 טיפ: אחרי כל שינוי באדמין, ייצא את הנתונים כדי לשמור אותם ב-data.json
-    `;
-    
-    alert(instructions);
-    showSuccess('✅ הקובץ data.json הורד! עיין בהוראות איך להעלות אותו ל-GitHub.');
+    showSuccess('✅ Backup downloaded. (No need to commit it — use "Publish to Site".)');
 }
 
 // Import data from JSON file
@@ -1671,13 +1649,13 @@ async function importDataFromFile() {
             const text = await file.text();
             const data = JSON.parse(text);
             
-            if (data.projects) localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(data.projects));
-            if (data.gallery) localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(data.gallery));
-            if (data.about) localStorage.setItem(STORAGE_KEYS.ABOUT, JSON.stringify(data.about));
-            if (data.skills) localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(data.skills));
-            if (data.contact) localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(data.contact));
-            if (data.hero) localStorage.setItem(STORAGE_KEYS.HERO, JSON.stringify(data.hero));
-            if (data.heroSlideshow) localStorage.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(data.heroSlideshow));
+            if (data.projects) store.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(data.projects));
+            if (data.gallery) store.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(data.gallery));
+            if (data.about) store.setItem(STORAGE_KEYS.ABOUT, JSON.stringify(data.about));
+            if (data.skills) store.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(data.skills));
+            if (data.contact) store.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(data.contact));
+            if (data.hero) store.setItem(STORAGE_KEYS.HERO, JSON.stringify(data.hero));
+            if (data.heroSlideshow) store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(data.heroSlideshow));
             
             // Reload all data
             loadAllData();

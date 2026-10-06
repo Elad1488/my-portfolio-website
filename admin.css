@@ -26,6 +26,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
 }
 
@@ -36,7 +37,20 @@ body {
 
 .header-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
+}
+
+.sync-status {
+    flex-basis: 100%;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+}
+
+#btn-publish:disabled {
+    opacity: 0.6;
+    cursor: wait;
 }
 
 .btn-view-site,
