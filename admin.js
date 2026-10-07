@@ -40,17 +40,19 @@ function initializeFileDrop() {
         if (!isFileDrag(e)) return;
         e.preventDefault();
         if (e.target.closest && e.target.closest('input[type="file"]')) return; // native input handles it
-        const file = e.dataTransfer.files[0];
-        if (!file) return;
+        const files = Array.from(e.dataTransfer.files);
+        if (!files.length) return;
         const modalOpen = document.getElementById('gallery-modal').classList.contains('active');
         const galleryTab = document.getElementById('gallery-tab').classList.contains('active');
         if (!modalOpen && !galleryTab) return;
         if (!modalOpen) {
             addNewGalleryItem();
             const title = document.getElementById('gallery-title');
-            if (title && !title.value) title.value = file.name.replace(/\.[^.]+$/, '');
+            if (title && !title.value) title.value = files[0].name.replace(/\.[^.]+$/, '');
         }
-        handleImageUpload({ target: { files: [file] } });
+        const hasMain = currentImageBase64 || document.getElementById('gallery-image-url').value.trim();
+        if (!hasMain) handleImageUpload({ target: { files: [files.shift()] } });
+        if (files.length) addAdditionalFiles(files);
     });
 }
 
@@ -1133,8 +1135,8 @@ function editGalleryItem(sectionIndex, itemIndex) {
     document.getElementById('gallery-image-url').value = item.imageUrl || '';
     
     // Load additional images
-    additionalImages = item.additionalImages || [];
-    loadFixedAdditionalImages();
+    additionalImages = (item.additionalImages || []).map(img => ({ ...img }));
+    renderAdditionalImagesList();
     
     // Helper function to convert GitHub blob URLs to raw URLs
     function convertGitHubUrl(url) {
@@ -1354,11 +1356,58 @@ function clearGalleryForm() {
     if (preview) preview.style.display = 'none';
     currentImageBase64 = null;
     additionalImages = [];
-    loadFixedAdditionalImages();
+    renderAdditionalImagesList();
 }
 
-// Additional images management
+// Additional images management (main image + up to 19 more = 20 per gallery item)
+const MAX_GALLERY_IMAGES = 20;
+const MAX_ADDITIONAL_IMAGES = MAX_GALLERY_IMAGES - 1;
+
+function convertPreviewUrl(url) {
+    if (url && url.includes('github.com') && url.includes('/blob/')) {
+        return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+    }
+    return url;
+}
+
+function readImageFile(file) {
+    return new Promise((resolve) => {
+        const isImage = file.type.startsWith('image/') || /\.(gif|jpe?g|png|webp)$/i.test(file.name);
+        if (!isImage) {
+            alert(`"${file.name}" is not an image.`);
+            return resolve(null);
+        }
+        const isGif = file.type === 'image/gif' || /\.gif$/i.test(file.name);
+        const maxSize = isGif ? 60 * 1024 * 1024 : 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert(`"${file.name}" is too large. Maximum size: ${maxSize / (1024 * 1024)}MB`);
+            return resolve(null);
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => { alert(`Error reading "${file.name}".`); resolve(null); };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function addAdditionalFiles(fileList) {
+    const files = Array.from(fileList || []);
+    const room = Math.max(MAX_ADDITIONAL_IMAGES - additionalImages.length, 0);
+    if (files.length > room) {
+        alert(`A gallery item can have up to ${MAX_GALLERY_IMAGES} images (main + ${MAX_ADDITIONAL_IMAGES}). Only the first ${room} will be added.`);
+    }
+    for (const file of files.slice(0, room)) {
+        const dataUrl = await readImageFile(file);
+        if (dataUrl) additionalImages.push({ imageUrl: '', imageBase64: dataUrl });
+    }
+    renderAdditionalImagesList();
+}
+
 function addAdditionalImageInput() {
+    if (additionalImages.length >= MAX_ADDITIONAL_IMAGES) {
+        alert(`A gallery item can have up to ${MAX_GALLERY_IMAGES} images.`);
+        return;
+    }
     additionalImages.push({ imageUrl: '', imageBase64: null });
     renderAdditionalImagesList();
 }
@@ -1368,53 +1417,41 @@ function removeAdditionalImage(index) {
     renderAdditionalImagesList();
 }
 
+function moveAdditionalImage(index, delta) {
+    const to = index + delta;
+    if (to < 0 || to >= additionalImages.length) return;
+    const [moved] = additionalImages.splice(index, 1);
+    additionalImages.splice(to, 0, moved);
+    renderAdditionalImagesList();
+}
+
 function renderAdditionalImagesList() {
     const container = document.getElementById('additional-images-list');
     if (!container) return;
-    
     container.innerHTML = '';
-    
+
     additionalImages.forEach((img, index) => {
+        const src = img.imageBase64 || convertPreviewUrl(img.imageUrl);
         const div = document.createElement('div');
-        div.style.cssText = 'margin-bottom: 0.75rem; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;';
+        div.style.cssText = 'display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;';
         div.innerHTML = `
-            <div style="display: flex; gap: 0.5rem; align-items: flex-start;">
-                <div style="flex: 1;">
-                    <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500;">Additional Image ${index + 1}</label>
-                    <input type="file" accept="image/*,.gif" onchange="handleAdditionalImageUpload(${index}, event)" style="width: 100%; margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                    <input type="url" placeholder="Or image URL" value="${img.imageUrl || ''}" onchange="updateAdditionalImageUrl(${index}, this.value)" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                    ${img.imageBase64 || img.imageUrl ? `<img src="${img.imageBase64 || img.imageUrl}" alt="Preview" style="max-width: 100px; max-height: 100px; margin-top: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">` : ''}
-                </div>
-                <button type="button" onclick="removeAdditionalImage(${index})" style="padding: 0.5rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1.2rem; line-height: 1;">&times;</button>
+            <span style="width: 1.5rem; text-align: center; font-weight: 500; color: #666;">${index + 2}</span>
+            <div style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 4px; border: 1px solid #ddd; background: #eee; overflow: hidden;">
+                ${src ? `<img src="${src}" alt="" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
             </div>
+            <div style="flex: 1; min-width: 0;">
+                <input type="url" placeholder="Image URL" value="${img.imageBase64 ? '' : (img.imageUrl || '')}" onchange="updateAdditionalImageUrl(${index}, this.value)" style="width: 100%; padding: 0.4rem; border: 1px solid #ddd; border-radius: 4px;">
+                ${img.imageBase64 ? '<small style="color: #10b981;">New upload, saved to media/ on Publish</small>' : ''}
+            </div>
+            <button type="button" onclick="moveAdditionalImage(${index}, -1)" title="Move up" style="padding: 0.3rem 0.5rem; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer;">↑</button>
+            <button type="button" onclick="moveAdditionalImage(${index}, 1)" title="Move down" style="padding: 0.3rem 0.5rem; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer;">↓</button>
+            <button type="button" onclick="removeAdditionalImage(${index})" title="Remove" style="padding: 0.3rem 0.6rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">&times;</button>
         `;
         container.appendChild(div);
     });
-}
 
-function handleAdditionalImageUpload(index, event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    if (!file.type.startsWith('image/')) {
-        alert('Please select an image file.');
-        return;
-    }
-    
-    // Check file size (60MB for GIFs, 5MB for others)
-    const maxSize = file.type === 'image/gif' ? 60 * 1024 * 1024 : 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-        alert(`File is too large. Maximum size: ${maxSize / (1024 * 1024)}MB`);
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        additionalImages[index].imageBase64 = e.target.result;
-        additionalImages[index].imageUrl = ''; // Clear URL if base64 is provided
-        renderAdditionalImagesList();
-    };
-    reader.readAsDataURL(file);
+    const counter = document.getElementById('additional-images-count');
+    if (counter) counter.textContent = `${additionalImages.length + 1} / ${MAX_GALLERY_IMAGES} images (including the main image)`;
 }
 
 function updateAdditionalImageUrl(index, url) {
@@ -1422,103 +1459,6 @@ function updateAdditionalImageUrl(index, url) {
     if (url.trim()) {
         additionalImages[index].imageBase64 = null; // Clear base64 if URL is provided
     }
-    renderAdditionalImagesList();
-}
-
-// Fixed additional images handlers (for images 2, 3, 4)
-function handleFixedAdditionalImage(slotIndex, event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    if (!file.type.startsWith('image/')) {
-        alert('Please select an image file.');
-        return;
-    }
-    
-    // Check file size (60MB for GIFs, 5MB for others)
-    const maxSize = file.type === 'image/gif' ? 60 * 1024 * 1024 : 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-        alert(`File is too large. Maximum size: ${maxSize / (1024 * 1024)}MB`);
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        // Ensure additionalImages array is long enough
-        while (additionalImages.length <= slotIndex) {
-            additionalImages.push({ imageUrl: '', imageBase64: null });
-        }
-        
-        additionalImages[slotIndex].imageBase64 = e.target.result;
-        additionalImages[slotIndex].imageUrl = ''; // Clear URL if base64 is provided
-        
-        // Update preview - slotIndex 0 = image 2, 1 = image 3, 2 = image 4
-        const imageNumber = slotIndex + 2; // 0+2=2, 1+2=3, 2+2=4
-        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
-        if (previewDiv) {
-            previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
-        }
-        
-        // Clear URL input
-        const urlInput = document.getElementById(`additional-image-${imageNumber}-url`);
-        if (urlInput) urlInput.value = '';
-        
-        console.log(`Saved additional image at index ${slotIndex} (Image ${imageNumber})`);
-    };
-    reader.readAsDataURL(file);
-}
-
-function updateFixedAdditionalImageUrl(slotIndex, url) {
-    // Ensure additionalImages array is long enough
-    while (additionalImages.length <= slotIndex) {
-        additionalImages.push({ imageUrl: '', imageBase64: null });
-    }
-    
-    additionalImages[slotIndex].imageUrl = url.trim();
-    if (url.trim()) {
-        additionalImages[slotIndex].imageBase64 = null; // Clear base64 if URL is provided
-        
-        // Update preview - slotIndex 0 = image 2, 1 = image 3, 2 = image 4
-        const imageNumber = slotIndex + 2; // 0+2=2, 1+2=3, 2+2=4
-        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
-        if (previewDiv) {
-            previewDiv.innerHTML = `<img src="${url.trim()}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
-        }
-        console.log(`Updated additional image URL at index ${slotIndex} (Image ${imageNumber})`);
-    } else {
-        // Clear preview if URL is empty
-        const imageNumber = slotIndex + 2;
-        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
-        if (previewDiv) previewDiv.innerHTML = '';
-    }
-}
-
-function loadFixedAdditionalImages() {
-    // Load images 2, 3, 4 into fixed slots
-    // i=0 -> additionalImages[0] -> Image 2 (display as "Additional Image 2")
-    // i=1 -> additionalImages[1] -> Image 3 (display as "Additional Image 3")
-    // i=2 -> additionalImages[2] -> Image 4 (display as "Additional Image 4")
-    console.log('Loading fixed additional images, count:', additionalImages.length);
-    
-    for (let i = 0; i < 3; i++) {
-        const img = additionalImages[i] || { imageUrl: '', imageBase64: null };
-        const imageNumber = i + 2; // 0+2=2, 1+2=3, 2+2=4
-        const urlInput = document.getElementById(`additional-image-${imageNumber}-url`);
-        const previewDiv = document.getElementById(`additional-image-${imageNumber}-preview`);
-        
-        if (urlInput) {
-            urlInput.value = img.imageUrl || '';
-        }
-        
-        if (previewDiv && (img.imageBase64 || img.imageUrl)) {
-            previewDiv.innerHTML = `<img src="${img.imageBase64 || img.imageUrl}" alt="Preview" style="max-width: 100px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">`;
-            console.log(`Loaded Image ${imageNumber} at index ${i}:`, img.imageUrl || 'base64');
-        } else if (previewDiv) {
-            previewDiv.innerHTML = '';
-        }
-    }
-    
-    // Render any additional images beyond the first 3 (indices 3+)
     renderAdditionalImagesList();
 }
 
