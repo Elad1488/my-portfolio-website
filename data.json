@@ -115,6 +115,13 @@
         "name": "Simulation & CAD",
         "items": [
           {
+            "title": "ATLAS 2.0 — Converging to a Human-Like Gait",
+            "description": "After many iterations in NVIDIA Isaac Sim, ATLAS 2.0 finally converged to a coherent, human-like gait.\n\nPretty impressive to see a beast with this many degrees of freedom learn to coordinate everything into one holistic walking behavior.",
+            "imageUrl": "media/d8efeb286ee2.mp4",
+            "imageBase64": null,
+            "additionalImages": []
+          },
+          {
             "title": "ATLAS 2.0 | imported to Isaac Sim as URDF",
             "description": "",
             "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/ATLAS%20GIF.gif",
@@ -215,13 +222,6 @@
                 "imageBase64": null
               }
             ]
-          },
-          {
-            "title": "ATLAS 2.0 — Converging to a Human-Like Gait",
-            "description": "After many iterations in NVIDIA Isaac Sim, ATLAS 2.0 finally converged to a coherent, human-like gait.\n\nPretty impressive to see a beast with this many degrees of freedom learn to coordinate everything into one holistic walking behavior.",
-            "imageUrl": "media/d8efeb286ee2.mp4",
-            "imageBase64": null,
-            "additionalImages": []
           }
         ]
       },
