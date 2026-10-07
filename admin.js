@@ -793,6 +793,7 @@ function loadHeroSlideshow() {
         
         item.innerHTML = `
             <div style="display: flex; gap: 1rem; align-items: start;">
+                <span class="sort-handle" title="Drag to reorder" style="cursor: grab; font-size: 1.4rem; color: #999; user-select: none;">☰</span>
                 <div style="flex: 1;">
                     ${previewHtml}
                     <input type="url" id="hero-slideshow-url-${index}" value="${img.imageUrl || ''}" placeholder="Image/GIF URL" onchange="updateHeroSlideshowImage(${index})" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
@@ -803,6 +804,15 @@ function loadHeroSlideshow() {
         `;
         list.appendChild(item);
     });
+    makeSortable(list, moveHeroSlideshowImage);
+}
+
+function moveHeroSlideshowImage(from, to) {
+    const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    const [moved] = images.splice(from, 1);
+    images.splice(to, 0, moved);
+    store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+    loadHeroSlideshow();
 }
 
 function addHeroSlideshowImage() {
@@ -826,6 +836,10 @@ function updateHeroSlideshowImage(index) {
 function handleHeroSlideshowUpload(index, event) {
     const file = event.target.files[0];
     if (!file) return;
+    if (!checkUploadSize(file)) {
+        event.target.value = '';
+        return;
+    }
     
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -1185,13 +1199,7 @@ function handleImageUpload(event) {
         return;
     }
     
-    // Size limit - 60000 KB (60 MB) for GIFs, 5MB for others
-    const maxSize = fileType === 'image/gif' ? 60000 * 1024 : 5 * 1024 * 1024; // 60000 KB for GIFs, 5MB for others
-    if (file.size > maxSize) {
-        const maxSizeMB = fileType === 'image/gif' ? '60 MB (60000 KB)' : '5 MB';
-        alert(`File is too large. Please use a file smaller than ${maxSizeMB}.`);
-        return;
-    }
+    if (!checkUploadSize(file)) return;
     
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -1359,6 +1367,52 @@ function clearGalleryForm() {
     renderAdditionalImagesList();
 }
 
+// Upload size limit for every image/GIF (GitHub rejects files over 100 MB)
+const MAX_UPLOAD_MB = 100;
+const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
+
+function checkUploadSize(file) {
+    if (file.size > MAX_UPLOAD_BYTES) {
+        alert(`"${file.name}" is ${(file.size / (1024 * 1024)).toFixed(1)} MB. Maximum size is ${MAX_UPLOAD_MB} MB.`);
+        return false;
+    }
+    return true;
+}
+
+// Drag rows by their ☰ handle to reorder; onReorder(fromIndex, toIndex)
+function makeSortable(container, onReorder) {
+    let from = null;
+    Array.from(container.children).forEach((row, index) => {
+        const handle = row.querySelector('.sort-handle');
+        if (!handle) return;
+        handle.addEventListener('mousedown', () => { row.draggable = true; });
+        row.addEventListener('dragstart', (e) => {
+            from = index;
+            row.style.opacity = '0.4';
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', String(index));
+        });
+        row.addEventListener('dragend', () => {
+            row.style.opacity = '';
+            row.draggable = false;
+            from = null;
+        });
+        row.addEventListener('dragover', (e) => {
+            if (from === null) return; // not a reorder drag (e.g. a file from the desktop)
+            e.preventDefault();
+            row.style.outline = '2px dashed #6366f1';
+        });
+        row.addEventListener('dragleave', () => { row.style.outline = ''; });
+        row.addEventListener('drop', (e) => {
+            row.style.outline = '';
+            if (from === null) return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (from !== index) onReorder(from, index);
+        });
+    });
+}
+
 // Additional images management (main image + up to 19 more = 20 per gallery item)
 const MAX_GALLERY_IMAGES = 20;
 const MAX_ADDITIONAL_IMAGES = MAX_GALLERY_IMAGES - 1;
@@ -1377,12 +1431,7 @@ function readImageFile(file) {
             alert(`"${file.name}" is not an image.`);
             return resolve(null);
         }
-        const isGif = file.type === 'image/gif' || /\.gif$/i.test(file.name);
-        const maxSize = isGif ? 60 * 1024 * 1024 : 5 * 1024 * 1024;
-        if (file.size > maxSize) {
-            alert(`"${file.name}" is too large. Maximum size: ${maxSize / (1024 * 1024)}MB`);
-            return resolve(null);
-        }
+        if (!checkUploadSize(file)) return resolve(null);
         const reader = new FileReader();
         reader.onload = (e) => resolve(e.target.result);
         reader.onerror = () => { alert(`Error reading "${file.name}".`); resolve(null); };
@@ -1435,6 +1484,7 @@ function renderAdditionalImagesList() {
         const div = document.createElement('div');
         div.style.cssText = 'display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9;';
         div.innerHTML = `
+            <span class="sort-handle" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem; color: #999; user-select: none;">☰</span>
             <span style="width: 1.5rem; text-align: center; font-weight: 500; color: #666;">${index + 2}</span>
             <div style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 4px; border: 1px solid #ddd; background: #eee; overflow: hidden;">
                 ${src ? `<img src="${src}" alt="" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
@@ -1443,12 +1493,11 @@ function renderAdditionalImagesList() {
                 <input type="url" placeholder="Image URL" value="${img.imageBase64 ? '' : (img.imageUrl || '')}" onchange="updateAdditionalImageUrl(${index}, this.value)" style="width: 100%; padding: 0.4rem; border: 1px solid #ddd; border-radius: 4px;">
                 ${img.imageBase64 ? '<small style="color: #10b981;">New upload, saved to media/ on Publish</small>' : ''}
             </div>
-            <button type="button" onclick="moveAdditionalImage(${index}, -1)" title="Move up" style="padding: 0.3rem 0.5rem; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer;">↑</button>
-            <button type="button" onclick="moveAdditionalImage(${index}, 1)" title="Move down" style="padding: 0.3rem 0.5rem; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer;">↓</button>
             <button type="button" onclick="removeAdditionalImage(${index})" title="Remove" style="padding: 0.3rem 0.6rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">&times;</button>
         `;
         container.appendChild(div);
     });
+    makeSortable(container, (from, to) => moveAdditionalImage(from, to - from));
 
     const counter = document.getElementById('additional-images-count');
     if (counter) counter.textContent = `${additionalImages.length + 1} / ${MAX_GALLERY_IMAGES} images (including the main image)`;
