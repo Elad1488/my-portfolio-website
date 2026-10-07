@@ -298,18 +298,6 @@
             "imageBase64": null,
             "additionalImages": [
               {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/T%20800%20p5.jpeg",
-                "imageBase64": null
-              },
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/T%20800%20p6.jpeg",
-                "imageBase64": null
-              },
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/T%20800%20p7.jpeg",
-                "imageBase64": null
-              },
-              {
                 "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/T%20800%20p1.jpeg",
                 "imageBase64": null
               },
@@ -323,6 +311,26 @@
               },
               {
                 "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-10-06%20at%2010.03.23.jpeg",
+                "imageBase64": null
+              },
+              {
+                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-10-06%20at%2020.56.51.jpeg",
+                "imageBase64": null
+              },
+              {
+                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-10-06%20at%2020.56.52.jpeg",
+                "imageBase64": null
+              },
+              {
+                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/T%20800%20p7.jpeg",
+                "imageBase64": null
+              },
+              {
+                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/T%20800%20p5.jpeg",
+                "imageBase64": null
+              },
+              {
+                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/T%20800%20p6.jpeg",
                 "imageBase64": null
               }
             ]
