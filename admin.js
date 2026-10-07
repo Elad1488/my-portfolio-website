@@ -1367,8 +1367,9 @@ function clearGalleryForm() {
     renderAdditionalImagesList();
 }
 
-// Upload size limit for every image/GIF (GitHub rejects files over 100 MB)
-const MAX_UPLOAD_MB = 100;
+// Upload size limit for every image/GIF. GitHub's API takes files as base64 (+33%) and
+// rejects requests near 100 MB, so ~75 MB is the real ceiling; 70 keeps a safe margin.
+const MAX_UPLOAD_MB = 70;
 const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
 
 function checkUploadSize(file) {

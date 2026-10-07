@@ -120,11 +120,12 @@ const sync = {
 
     // Replace every embedded data: URL with a file in media/, returning the new files.
     async extractMedia(data) {
-        const files = new Map(); // path -> base64 content
+        const files = new Map(); // path -> { content (base64), bytes, label }
         const exts = { jpeg: 'jpg', jpg: 'jpg', png: 'png', gif: 'gif', webp: 'webp', 'svg+xml': 'svg' };
-        const walk = async (o) => {
-            if (Array.isArray(o)) { for (const v of o) await walk(v); return; }
+        const walk = async (o, label) => {
+            if (Array.isArray(o)) { for (const v of o) await walk(v, label); return; }
             if (!o || typeof o !== 'object') return;
+            label = o.title || o.name || label;
             const b64 = o.imageBase64;
             if (typeof b64 === 'string' && b64.startsWith('data:')) {
                 const [head, content] = b64.split(',', 2);
@@ -133,13 +134,13 @@ const sync = {
                     .map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 12);
                 const ext = exts[head.slice(5).split(';')[0].split('/')[1]] || 'bin';
                 const path = `${GH.mediaDir}/${hash}.${ext}`;
-                files.set(path, content);
+                files.set(path, { content, bytes: bytes.length, label: label || 'Hero slideshow' });
                 o.imageUrl = path;
                 o.imageBase64 = null;
             }
-            for (const v of Object.values(o)) await walk(v);
+            for (const v of Object.values(o)) await walk(v, label);
         };
-        await walk(data);
+        await walk(data, '');
         return files;
     },
 
@@ -154,11 +155,28 @@ const sync = {
             const data = this.collectData();
             const media = await this.extractMedia(data);
 
+            const mb = (n) => (n / (1024 * 1024)).toFixed(1) + ' MB';
+            const tooBig = [...media.values()].filter(f => f.bytes > MAX_UPLOAD_BYTES);
+            if (tooBig.length) {
+                throw new Error(`These files are over the ${MAX_UPLOAD_MB} MB upload limit:\n` +
+                    tooBig.map(f => `• "${f.label}": ${mb(f.bytes)}`).join('\n') +
+                    '\n\nRemove or replace them (e.g. a shorter/smaller GIF), then Publish again.');
+            }
+
             const entries = [];
             let i = 0;
-            for (const [path, content] of media) {
-                this.setStatus(`Uploading image ${++i}/${media.size}…`);
-                const blob = await this.api('/git/blobs', { method: 'POST', body: { content, encoding: 'base64' } });
+            for (const [path, f] of media) {
+                this.setStatus(`Uploading image ${++i}/${media.size} (${mb(f.bytes)}, "${f.label}")…`);
+                let blob;
+                try {
+                    blob = await this.api('/git/blobs', { method: 'POST', body: { content: f.content, encoding: 'base64' } });
+                } catch (e) {
+                    if (e.status === 422) {
+                        throw new Error(`GitHub refused the image in "${f.label}" (${mb(f.bytes)}) as too large. ` +
+                            'Use a smaller file for it, then Publish again.');
+                    }
+                    throw e;
+                }
                 entries.push({ path, mode: '100644', type: 'blob', sha: blob.sha });
             }
             this.setStatus('Uploading data.json…');
