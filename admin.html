@@ -125,13 +125,15 @@
             <!-- Hero Slideshow Images Section -->
             <div class="section-header" style="margin-top: 3rem;">
                 <h2>Hero Background Slideshow Images</h2>
-                <small style="display: block; margin-top: 0.5rem; color: #666;">Add dedicated images/GIFs for the hero slideshow. These will be added to the automatic slideshow that pulls from your gallery.</small>
+                <small style="display: block; margin-top: 0.5rem; color: #666;">Add dedicated GIFs or MP4 videos for the hero slideshow. These will be added to the automatic slideshow that pulls from your gallery.</small>
             </div>
             <div class="form-section">
                 <div id="hero-slideshow-list" style="margin-bottom: 1.5rem;">
                     <!-- Hero slideshow images will be dynamically added here -->
                 </div>
-                <button class="btn-add" onclick="addHeroSlideshowImage()">+ Add Image/GIF</button>
+                <button class="btn-add" onclick="addHeroSlideshowImage()">+ Add by URL</button>
+                <input type="file" multiple accept="image/*,.gif,video/mp4,video/webm,.mp4,.webm" onchange="addHeroSlideshowFiles(this.files); this.value = '';" style="margin-left: 0.5rem; padding: 0.5rem; border: 1px dashed #ccc; border-radius: 4px;">
+                <small style="display: block; margin-top: 0.5rem; color: #666;">GIFs or MP4/WebM videos, up to 70 MB each (static images are not shown in the hero). Select several files or drag them onto this tab. Videos play to the end, GIFs show for 2.5 s. Drag ☰ to reorder.</small>
             </div>
         </div>
     </div>

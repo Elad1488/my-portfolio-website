@@ -706,18 +706,18 @@ function setupHeroGifSlideshow() {
         });
     }
     
-    // Add dedicated hero slideshow images from data.json or localStorage FIRST (only GIFs)
-    const heroSlideshowData = siteData?.heroSlideshow || JSON.parse(localStorage.getItem('portfolio_hero_slideshow') || '[]');
+    // Add dedicated hero slideshow items from data.json FIRST (GIFs and MP4/WebM videos)
+    const heroSlideshowData = siteData?.heroSlideshow || [];
     const dedicatedImages = [];
     if (heroSlideshowData && Array.isArray(heroSlideshowData)) {
         heroSlideshowData.forEach((img, index) => {
             let imgSrc = img.imageUrl || img.imageBase64 || '';
             imgSrc = convertGitHubUrl(imgSrc);
             if (imgSrc) {
-                if (isGif(imgSrc)) {
+                if (isGif(imgSrc) || isHeroVideo(imgSrc)) {
                     dedicatedImages.push(imgSrc);
                 } else {
-                    console.warn(`Skipping non-GIF image from dedicated slideshow at index ${index}:`, imgSrc.substring(0, 100));
+                    console.warn(`Skipping non-GIF/video item from dedicated slideshow at index ${index}:`, imgSrc.substring(0, 100));
                 }
             }
         });
@@ -778,34 +778,69 @@ function setupHeroGifSlideshow() {
     
     console.log(`Found ${gifUrls.length} images for hero slideshow:`, gifUrls);
     
-    // Create img elements for each image
-    gifUrls.forEach((imgUrl, index) => {
-        const img = document.createElement('img');
-        img.src = imgUrl;
-        img.alt = `Hero background image ${index + 1}`;
-        img.loading = 'eager'; // Load immediately for background
-        if (index === 0) {
-            img.classList.add('active'); // First image is active
+    // Create an <img> or <video> element for each slide
+    const slides = gifUrls.map((url, index) => {
+        let el;
+        if (isHeroVideo(url)) {
+            el = document.createElement('video');
+            el.src = url;
+            el.muted = true; // required for autoplay
+            el.setAttribute('muted', '');
+            el.playsInline = true;
+            el.setAttribute('playsinline', '');
+            el.preload = index === 0 ? 'auto' : 'metadata';
+        } else {
+            el = document.createElement('img');
+            el.src = url;
+            el.alt = `Hero background image ${index + 1}`;
+            el.loading = 'eager'; // Load immediately for background
         }
-        slideshowContainer.appendChild(img);
+        slideshowContainer.appendChild(el);
+        return el;
     });
-    
-    // Cycle through images every 2.5 seconds
+
+    // Images/GIFs stay 2.5 seconds; videos play to the end (max 30 seconds)
+    const IMAGE_DURATION = 2500;
+    const MAX_VIDEO_DURATION = 30000;
     let currentIndex = 0;
-    const images = slideshowContainer.querySelectorAll('img');
-    
-    if (images.length > 1) {
-        setInterval(() => {
-            // Remove active class from current image
-            images[currentIndex].classList.remove('active');
-            
-            // Move to next image
-            currentIndex = (currentIndex + 1) % images.length;
-            
-            // Add active class to new image
-            images[currentIndex].classList.add('active');
-        }, 2500); // 2.5 seconds per image
+    let timer = null;
+
+    function showSlide(index) {
+        const prev = slides[currentIndex];
+        prev.classList.remove('active');
+        if (prev.tagName === 'VIDEO') prev.pause();
+
+        currentIndex = index;
+        const slide = slides[currentIndex];
+        slide.classList.add('active');
+        clearTimeout(timer);
+        if (slides.length === 1 && slide.tagName === 'VIDEO') slide.loop = true;
+
+        if (slide.tagName === 'VIDEO') {
+            slide.currentTime = 0;
+            slide.play().catch(() => {}); // autoplay may be blocked; the timer still advances
+            if (slides.length > 1) {
+                slide.onended = () => next();
+                timer = setTimeout(next, MAX_VIDEO_DURATION);
+            }
+        } else if (slides.length > 1) {
+            timer = setTimeout(next, IMAGE_DURATION);
+        }
     }
+
+    function next() {
+        showSlide((currentIndex + 1) % slides.length);
+    }
+
+    showSlide(0);
+}
+
+// True for MP4/WebM URLs or data: videos
+function isHeroVideo(url) {
+    if (!url) return false;
+    const lower = url.toLowerCase().trim();
+    if (lower.startsWith('data:video/')) return true;
+    return /\.(mp4|webm|m4v)(\?|#|$)/.test(lower);
 }
 
 // Load Gallery Section

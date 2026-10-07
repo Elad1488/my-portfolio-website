@@ -44,6 +44,11 @@ function initializeFileDrop() {
         if (!files.length) return;
         const modalOpen = document.getElementById('gallery-modal').classList.contains('active');
         const galleryTab = document.getElementById('gallery-tab').classList.contains('active');
+        const heroTab = document.getElementById('hero-tab').classList.contains('active');
+        if (!modalOpen && heroTab) {
+            addHeroSlideshowFiles(files);
+            return;
+        }
         if (!modalOpen && !galleryTab) return;
         if (!modalOpen) {
             addNewGalleryItem();
@@ -789,15 +794,18 @@ function loadHeroSlideshow() {
         item.style.cssText = 'padding: 1rem; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; background: #f9f9f9;';
         
         const preview = img.imageBase64 ? img.imageBase64 : (img.imageUrl || '');
-        const previewHtml = preview ? `<img src="${convertGitHubUrl(preview)}" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 0.5rem; display: block;">` : '';
+        const previewStyle = 'max-width: 150px; max-height: 150px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 0.5rem; display: block;';
+        const previewHtml = !preview ? '' : isVideoSource(preview)
+            ? `<video src="${convertGitHubUrl(preview)}" muted loop autoplay playsinline style="${previewStyle}"></video>`
+            : `<img src="${convertGitHubUrl(preview)}" alt="Preview" style="${previewStyle}">`;
         
         item.innerHTML = `
             <div style="display: flex; gap: 1rem; align-items: start;">
                 <span class="sort-handle" title="Drag to reorder" style="cursor: grab; font-size: 1.4rem; color: #999; user-select: none;">☰</span>
                 <div style="flex: 1;">
                     ${previewHtml}
-                    <input type="url" id="hero-slideshow-url-${index}" value="${img.imageUrl || ''}" placeholder="Image/GIF URL" onchange="updateHeroSlideshowImage(${index})" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                    <input type="file" id="hero-slideshow-file-${index}" accept="image/*,.gif" onchange="handleHeroSlideshowUpload(${index}, event)" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="url" id="hero-slideshow-url-${index}" value="${img.imageUrl || ''}" placeholder="Image/GIF/MP4 URL" onchange="updateHeroSlideshowImage(${index})" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="file" id="hero-slideshow-file-${index}" accept="image/*,.gif,video/mp4,video/webm,.mp4,.webm" onchange="handleHeroSlideshowUpload(${index}, event)" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
                     <button class="btn-remove" onclick="removeHeroSlideshowImage(${index})" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
                 </div>
             </div>
@@ -811,6 +819,32 @@ function moveHeroSlideshowImage(from, to) {
     const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
     const [moved] = images.splice(from, 1);
     images.splice(to, 0, moved);
+    store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
+    loadHeroSlideshow();
+}
+
+function isVideoSource(src) {
+    const lower = (src || '').toLowerCase();
+    return lower.startsWith('data:video/') || /\.(mp4|webm|m4v)(\?|#|$)/.test(lower);
+}
+
+async function addHeroSlideshowFiles(fileList) {
+    const images = JSON.parse(store.getItem(STORAGE_KEYS.HERO_SLIDESHOW) || '[]');
+    for (const file of Array.from(fileList || [])) {
+        const ok = /^(image\/|video\/(mp4|webm))/.test(file.type) || /\.(gif|jpe?g|png|webp|mp4|webm)$/i.test(file.name);
+        if (!ok) {
+            alert(`"${file.name}" is not an image, GIF or MP4/WebM video.`);
+            continue;
+        }
+        if (!checkUploadSize(file)) continue;
+        const dataUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(file);
+        });
+        if (dataUrl) images.push({ imageUrl: '', imageBase64: dataUrl });
+    }
     store.setItem(STORAGE_KEYS.HERO_SLIDESHOW, JSON.stringify(images));
     loadHeroSlideshow();
 }

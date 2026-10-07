@@ -121,7 +121,7 @@ const sync = {
     // Replace every embedded data: URL with a file in media/, returning the new files.
     async extractMedia(data) {
         const files = new Map(); // path -> { content (base64), bytes, label }
-        const exts = { jpeg: 'jpg', jpg: 'jpg', png: 'png', gif: 'gif', webp: 'webp', 'svg+xml': 'svg' };
+        const exts = { jpeg: 'jpg', jpg: 'jpg', png: 'png', gif: 'gif', webp: 'webp', 'svg+xml': 'svg', mp4: 'mp4', webm: 'webm' };
         const walk = async (o, label) => {
             if (Array.isArray(o)) { for (const v of o) await walk(v, label); return; }
             if (!o || typeof o !== 'object') return;
