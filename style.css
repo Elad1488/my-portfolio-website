@@ -848,7 +848,8 @@ section {
     background: #1a1a1a;
 }
 
-.gallery-image-wrapper img {
+.gallery-image-wrapper img,
+.gallery-image-wrapper video {
     position: absolute;
     top: 0;
     left: 0;
@@ -858,14 +859,16 @@ section {
     transition: transform 0.3s ease;
 }
 
-/* Support for GIFs - maintain aspect ratio */
+/* Support for GIFs and videos - maintain aspect ratio */
 .gallery-image-wrapper img[src*="data:image/gif"],
-.gallery-image-wrapper img[src$=".gif"] {
+.gallery-image-wrapper img[src$=".gif"],
+.gallery-image-wrapper video {
     object-fit: contain;
     background: #1a1a1a;
 }
 
-.gallery-item:hover .gallery-image-wrapper img {
+.gallery-item:hover .gallery-image-wrapper img,
+.gallery-item:hover .gallery-image-wrapper video {
     transform: scale(1.1);
 }
 

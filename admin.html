@@ -200,10 +200,11 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Image or GIF *</label>
-                    <input type="file" id="gallery-image-input" accept="image/*,.gif" onchange="handleImageUpload(event)">
+                    <input type="file" id="gallery-image-input" accept="image/*,.gif,video/mp4,video/webm,.mp4,.webm" onchange="handleImageUpload(event)">
                     <small>Upload an image file (JPG, PNG, GIF, etc.)</small>
                     <div id="gallery-image-preview" style="margin-top: 1rem; display: none;">
                         <img id="gallery-preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                        <video id="gallery-preview-video" muted loop autoplay playsinline controls style="display: none; max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px solid #e0e0e0;"></video>
                     </div>
                 </div>
                 
@@ -235,8 +236,8 @@
                     <label>Additional Images (Optional)</label>
                     <small>Add multiple related images that will be shown in the gallery lightbox when clicking the main image</small>
                     
-                    <input type="file" multiple accept="image/*,.gif" onchange="addAdditionalFiles(this.files); this.value = '';" style="width: 100%; margin-top: 0.75rem; padding: 0.5rem; border: 1px dashed #ccc; border-radius: 4px;">
-                    <small style="display: block; margin: 0.25rem 0 0.75rem; color: #666;">Select several files at once, or drag them onto this window. Up to 20 images per item, 70 MB each. Drag ☰ to reorder.</small>
+                    <input type="file" multiple accept="image/*,.gif,video/mp4,video/webm,.mp4,.webm" onchange="addAdditionalFiles(this.files); this.value = '';" style="width: 100%; margin-top: 0.75rem; padding: 0.5rem; border: 1px dashed #ccc; border-radius: 4px;">
+                    <small style="display: block; margin: 0.25rem 0 0.75rem; color: #666;">Select several files at once, or drag them onto this window. Images, GIFs or MP4/WebM videos. Up to 20 per item, 70 MB each. Drag ☰ to reorder.</small>
                     <div id="additional-images-list"></div>
                     <button type="button" class="btn-add-secondary" onclick="addAdditionalImageInput()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #f0f0f0; border: 1px dashed #ccc; border-radius: 4px; cursor: pointer;">+ Add by URL</button>
                     <small id="additional-images-count" style="display: block; margin-top: 0.5rem; color: #666;"></small>

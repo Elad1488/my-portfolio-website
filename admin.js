@@ -823,6 +823,24 @@ function moveHeroSlideshowImage(from, to) {
     loadHeroSlideshow();
 }
 
+function setGalleryPreviewSrc(src) {
+    const img = document.getElementById('gallery-preview-img');
+    const video = document.getElementById('gallery-preview-video');
+    if (!img || !video) return;
+    if (isVideoSource(src)) {
+        img.style.display = 'none';
+        img.removeAttribute('src');
+        video.style.display = '';
+        video.src = src;
+    } else {
+        video.pause();
+        video.removeAttribute('src');
+        video.style.display = 'none';
+        img.style.display = '';
+        img.src = src;
+    }
+}
+
 function isVideoSource(src) {
     const lower = (src || '').toLowerCase();
     return lower.startsWith('data:video/') || /\.(mp4|webm|m4v)(\?|#|$)/.test(lower);
@@ -928,7 +946,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const preview = document.getElementById('gallery-image-preview');
                 const previewImg = document.getElementById('gallery-preview-img');
                 if (preview && previewImg) {
-                    previewImg.src = previewUrl;
+                    setGalleryPreviewSrc(previewUrl);
                     preview.style.display = 'block';
                     // Clear base64 when URL is entered
                     currentImageBase64 = null;
@@ -1118,7 +1136,9 @@ function createGalleryItem(item, sectionIndex, itemIndex) {
     div.innerHTML = `
         <div class="drag-handle" title="Drag to reorder or move between sections">☰</div>
         <div class="gallery-item-preview">
-            <img src="${imageSrc}" alt="${item.title || 'Gallery image'}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect width=\'200\' height=\'200\' fill=\'%23e0e0e0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+            ${isVideoSource(imageSrc)
+                ? `<video src="${imageSrc}" muted loop autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>`
+                : `<img src="${imageSrc}" alt="${item.title || 'Gallery image'}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect width=\'200\' height=\'200\' fill=\'%23e0e0e0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3ENo Image%3C/text%3E%3C/svg%3E'">`}
         </div>
         <div class="gallery-item-info">
             <h4>${item.title || 'Untitled'}</h4>
@@ -1200,7 +1220,7 @@ function editGalleryItem(sectionIndex, itemIndex) {
         const preview = document.getElementById('gallery-image-preview');
         const previewImg = document.getElementById('gallery-preview-img');
         if (preview && previewImg) {
-            previewImg.src = item.imageBase64;
+            setGalleryPreviewSrc(item.imageBase64);
             preview.style.display = 'block';
         }
     } else if (item.imageUrl) {
@@ -1209,7 +1229,7 @@ function editGalleryItem(sectionIndex, itemIndex) {
         if (preview && previewImg) {
             // Convert GitHub blob URLs to raw URLs for preview
             const convertedUrl = convertGitHubUrl(item.imageUrl);
-            previewImg.src = convertedUrl;
+            setGalleryPreviewSrc(convertedUrl);
             preview.style.display = 'block';
         }
     }
@@ -1223,13 +1243,13 @@ function handleImageUpload(event) {
     if (!file) return;
     
     // Check file type - support images and GIFs
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'video/mp4', 'video/webm'];
     const fileType = file.type.toLowerCase();
     const fileName = file.name.toLowerCase();
-    const isImage = validTypes.includes(fileType) || fileName.endsWith('.gif') || fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png');
-    
+    const isImage = validTypes.includes(fileType) || /\.(gif|jpe?g|png|webp|mp4|webm)$/.test(fileName);
+
     if (!isImage) {
-        alert('Please upload an image file (JPG, PNG, GIF, WebP, or SVG).');
+        alert('Please upload an image or video file (JPG, PNG, GIF, WebP, SVG, MP4 or WebM).');
         return;
     }
     
@@ -1241,7 +1261,7 @@ function handleImageUpload(event) {
         const preview = document.getElementById('gallery-image-preview');
         const previewImg = document.getElementById('gallery-preview-img');
         if (preview && previewImg) {
-            previewImg.src = currentImageBase64;
+            setGalleryPreviewSrc(currentImageBase64);
             preview.style.display = 'block';
         }
         // Show file size info
@@ -1461,9 +1481,9 @@ function convertPreviewUrl(url) {
 
 function readImageFile(file) {
     return new Promise((resolve) => {
-        const isImage = file.type.startsWith('image/') || /\.(gif|jpe?g|png|webp)$/i.test(file.name);
+        const isImage = /^(image\/|video\/(mp4|webm))/.test(file.type) || /\.(gif|jpe?g|png|webp|mp4|webm)$/i.test(file.name);
         if (!isImage) {
-            alert(`"${file.name}" is not an image.`);
+            alert(`"${file.name}" is not an image or MP4/WebM video.`);
             return resolve(null);
         }
         if (!checkUploadSize(file)) return resolve(null);
@@ -1522,7 +1542,9 @@ function renderAdditionalImagesList() {
             <span class="sort-handle" title="Drag to reorder" style="cursor: grab; font-size: 1.2rem; color: #999; user-select: none;">☰</span>
             <span style="width: 1.5rem; text-align: center; font-weight: 500; color: #666;">${index + 2}</span>
             <div style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 4px; border: 1px solid #ddd; background: #eee; overflow: hidden;">
-                ${src ? `<img src="${src}" alt="" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
+                ${!src ? '' : isVideoSource(src)
+                    ? `<video src="${src}" muted loop autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>`
+                    : `<img src="${src}" alt="" style="width: 100%; height: 100%; object-fit: cover;">`}
             </div>
             <div style="flex: 1; min-width: 0;">
                 <input type="url" placeholder="Image URL" value="${img.imageBase64 ? '' : (img.imageUrl || '')}" onchange="updateAdditionalImageUrl(${index}, this.value)" style="width: 100%; padding: 0.4rem; border: 1px solid #ddd; border-radius: 4px;">
