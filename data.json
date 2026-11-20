@@ -1,15 +1,6 @@
 {
   "projects": [
     {
-      "name": "Anduril Anvil Drone | Isaac Sim vs MuJoCo",
-      "description": "Cross-platform validation of Anduril's Anvil UAV physics in NVIDIA Isaac Sim and MuJoCo. The vehicle's response to step inputs in X, Y, Z and yaw is compared across both simulators, verifying consistent dynamics and control response. Cross-platform validation builds confidence in the simulation model, exposes platform-specific discrepancies and reduces sim-to-real risk, so controller performance doesn't depend on a single physics engine.",
-      "thumbnail": "media/anvil_isaac_vs_mujoco_thumb.jpg",
-      "youtubeUrl": "TYSoupo6VPw",
-      "technologies": ["NVIDIA Isaac Sim", "MuJoCo", "PhysX", "UAV"],
-      "projectUrl": "",
-      "sourceUrl": ""
-    },
-    {
       "name": "ATLAS 2.0 — Standing Up",
       "description": "ATLAS 2.0, my humanoid robot, standing up. Watch the full video on YouTube.",
       "thumbnail": "media/atlas2_standing_up_thumb.jpg",
@@ -42,6 +33,15 @@
       "thumbnail": "https://www.youtube.com/watch?v=Odg2IOA6sdo",
       "youtubeUrl": "Odg2IOA6sdo",
       "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
+      "name": "Anduril Anvil Drone | Isaac Sim vs MuJoCo",
+      "description": "Cross-platform validation of Anduril's Anvil UAV physics in NVIDIA Isaac Sim and MuJoCo. The vehicle's response to step inputs in X, Y, Z and yaw is compared across both simulators, verifying consistent dynamics and control response. Cross-platform validation builds confidence in the simulation model, exposes platform-specific discrepancies and reduces sim-to-real risk, so controller performance doesn't depend on a single physics engine.",
+      "thumbnail": "media/anvil_isaac_vs_mujoco_thumb.jpg",
+      "youtubeUrl": "TYSoupo6VPw",
+      "technologies": ["NVIDIA Isaac Sim", "MuJoCo", "PhysX", "UAV"],
       "projectUrl": "",
       "sourceUrl": ""
     },
