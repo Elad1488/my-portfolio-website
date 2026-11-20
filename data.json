@@ -135,14 +135,14 @@
           {
             "title": "Red Bull Racing Robot — Transform, Corner, Jump",
             "description": "Wheeled-legged robot rendered in a dark studio: standing on two wheels, transforming to all fours, cornering with all wheels planted, then launching off the Red Bull ramp into the Skynet net.",
-            "imageUrl": "media/b7f1c35a92e4.gif",
+            "imageUrl": "media/b7f1c35a92e4.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "3D Printed Guitar — From CAD to Strings",
             "description": "The guitar I designed in CAD and 3D printed, shown next to its CAD model, then a pan along the strung neck to the headstock and tuning pegs.",
-            "imageUrl": "media/e2a9d4b6c715.gif",
+            "imageUrl": "media/e2a9d4b6c715.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
@@ -156,56 +156,56 @@
           {
             "title": "ATLAS 2.0 | imported to Isaac Sim as URDF",
             "description": "",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/ATLAS%20GIF.gif",
+            "imageUrl": "media/atlas-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "Stability Without Yaw Constraints: Spot in Free Rotation",
             "description": "In this task, Spot is required to maintain balance and locomotion stability while yaw rotation is left completely unconstrained.\nThe resulting behavior resembles a spinning top, highlighting the controller’s ability to stabilize the system without restricting rotational degrees of freedom.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Draidel_SPOT_GIF.gif",
+            "imageUrl": "media/draidel-spot-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "ATLAS 2.0 articulated Digital Twin",
             "description": "",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/ggggggggggggggg.gif",
+            "imageUrl": "media/ggggggggggggggg.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "K-9",
             "description": "",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/robodog_gif.gif",
+            "imageUrl": "media/robodog-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "ATLAS 2.0 after texturing",
             "description": "Here’s my Atlas digital twin in USD format inside Isaac Sim.\nI manually added some image-based textures just to get a feel for how things could look visually - more of a quick concept than a polished art pass.\nI’m definitely not an expert in texturing, but I think it still turned out pretty cool, what say you?",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/atlas_textured_gif.gif",
+            "imageUrl": "media/atlas-textured-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "ATLAS - One Small Step For Machine | Isaac Sim",
             "description": "Atlas 2.0 takes its first successful steps in NVIDIA Isaac Sim following reinforcement learning (RL) convergence.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/ATLASWALK_GIF.gif",
+            "imageUrl": "media/atlaswalk-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "Planetary Gear for 1280KV Brushless Motor",
             "description": "A single-stage planetary gearbox designed around a 1280KV brushless motor with a 5 mm shaft. The transmission uses one 16-tooth sun gear, three 24-tooth planet gears, and one 64-tooth internal ring gear with module 1.25 and 20° pressure angle. The planets are mounted on a carrier at 120° spacing and rotate inside the internal ring gear. The gearbox provides an approximate 5:1 reduction ratio, increasing the output torque by about 500% while reducing the output speed by 80%. The system is optimized for compact size, smooth motion, and about 0.5 Nm output torque.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Gear%20Gif.gif",
+            "imageUrl": "media/gear-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "EG-209",
             "description": "EG-209 – My own interpretation of a servo-based bipedal robot design, inspired by the famous ED-209 robot from RoboCop",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/EG-209%20GIF.gif",
+            "imageUrl": "media/eg-209-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
@@ -263,7 +263,7 @@
           {
             "title": "Arachnid Warrior | Starship Troopers (1997)",
             "description": "Phil Tippett’s Arachnid Warrior, from Paul Verhoeven’s 1997 Starship Troopers. Nearly three decades later, it still feels iconic-a testament to the imagination, craft, and fearless vision of two artists to whom modern sci-fi owes a profound cultural debt.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/StarShip%20Troopers.gif",
+            "imageUrl": "media/starship-troopers.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
@@ -335,7 +335,7 @@
           {
             "title": "Love Death & Robots | Khanivore | Sonnie's Edge",
             "description": "",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/CARNIVOR.gif",
+            "imageUrl": "media/carnivor.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
@@ -354,21 +354,21 @@
           {
             "title": "Custom 7-inch Drone | Pixhawk, Raspberry Pi and Jetson Gimbal",
             "description": "Quadcopter I built on a 7-inch frame, flown by a Pixhawk 2.4.8 flight controller that is commanded by a Raspberry Pi, and powered by a 6S (22 V) battery. A Jetson Nano runs a 2-axis gimbal carrying IR and EO cameras. The clip shows the build, the gimbal and Jetson setup, and a test flight of the drone.",
-            "imageUrl": "media/d3f6b82a9c41.gif",
+            "imageUrl": "media/d3f6b82a9c41.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "Gimbal Person Tracker + EO/IR Drone Tracking",
             "description": "A servo gimbal that finds me, locks a YOU box on my face and swings its head to keep me in frame (phone camera left, Jetson tracker view right, 3x speed), followed by the EO/IR tracker locking onto a drone in the thermal view with its motion box and track trail.",
-            "imageUrl": "media/c4e8a1d7f203.gif",
+            "imageUrl": "media/c4e8a1d7f203.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
           {
             "title": "Vulcan-Inspired Auto-Targeting System",
             "description": "Real-time visual target tracking with a PixyCam and a pair of pan-tilt servos for azimuth and elevation. The camera locks onto objects by color and keeps the target centered, while a second pair of servos mirrors its motion and drives a 3D-printed Vulcan-style turret, used here purely for illustration. A low-cost proof of concept for vision-based tracking coupled to a physical platform.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/minigun_clip_gif.gif",
+            "imageUrl": "media/minigun-clip-gif.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
@@ -379,7 +379,7 @@
             "imageBase64": null,
             "additionalImages": [
               {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Gear%20Gif.gif",
+                "imageUrl": "media/gear-gif.mp4",
                 "imageBase64": null
               },
               {
@@ -395,7 +395,7 @@
           {
             "title": "Belt Actuator for NEMA 17 Stepper Motor",
             "description": "This belt-driven actuator design uses a standard NEMA 17 stepper motor (typically around 2.2 Nm torque) combined with a high-ratio belt reduction system to achieve an estimated output torque of nearly 30 Nm. The transmission provides roughly a 13–14:1 reduction ratio, significantly increasing torque while maintaining smooth, compact, and efficient operation.\n\nThe actuator was 3D printed and assembled based on the original belt-drive design by the How To Mechatronics YouTube channel, featured in the video “Cycloidal vs Belt vs Planetary - The Best 3D Printed Drive for Your Next Robotic Project?”.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsAppVideo2026-05-28at23.01.17-ezgif.com-video-to-gif-converter.gif",
+            "imageUrl": "media/whatsappvideo2026-05-28at23-01-17-ezgif-.mp4",
             "imageBase64": null,
             "additionalImages": [
               {
@@ -415,7 +415,7 @@
           {
             "title": "The Sphere",
             "description": "In collaboration with a friend who shares the same passion for engineering, we turned a concept sketched on paper into reality: a remotely controlled differential-drive spherical robot. What started as an idea evolved into a fully functional prototype through design, fabrication, electronics integration, and programming.\n\nOur next step is to equip the robot with an onboard camera and develop autonomous decision-making capabilities, enabling it to perceive its environment and operate independently without direct human control.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Sphere%20Bot%20GIF.gif",
+            "imageUrl": "media/sphere-bot-gif.mp4",
             "imageBase64": null,
             "additionalImages": [
               {
@@ -527,35 +527,35 @@
   },
   "heroSlideshow": [
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/minigun_clip_gif.gif",
+      "imageUrl": "media/minigun-clip-gif.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/cassie_gif.gif",
+      "imageUrl": "media/cassie-gif.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/cart_demo_gif.gif",
+      "imageUrl": "media/cart-demo-gif.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/atlas_textured_gif.gif",
+      "imageUrl": "media/atlas-textured-gif.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/StarShip%20Troopers.gif",
+      "imageUrl": "media/starship-troopers.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/BIPEDAL%20WALKER%20ISAAC%20SIM3.gif",
+      "imageUrl": "media/bipedal-walker-isaac-sim3.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/DUAL%20FEED%20GGIIFF.gif",
+      "imageUrl": "media/dual-feed-ggiiff.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "media/9b51d2bf7330.gif",
+      "imageUrl": "media/9b51d2bf7330.mp4",
       "imageBase64": null
     },
     {
@@ -563,23 +563,23 @@
       "imageBase64": null
     },
     {
-      "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsAppVideo2026-05-28at23.01.17-ezgif.com-video-to-gif-converter.gif",
+      "imageUrl": "media/whatsappvideo2026-05-28at23-01-17-ezgif-.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "media/b7f1c35a92e4.gif",
+      "imageUrl": "media/b7f1c35a92e4.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "media/c4e8a1d7f203.gif",
+      "imageUrl": "media/c4e8a1d7f203.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "media/e2a9d4b6c715.gif",
+      "imageUrl": "media/e2a9d4b6c715.mp4",
       "imageBase64": null
     },
     {
-      "imageUrl": "media/d3f6b82a9c41.gif",
+      "imageUrl": "media/d3f6b82a9c41.mp4",
       "imageBase64": null
     }
   ]
