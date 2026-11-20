@@ -140,13 +140,6 @@
             "additionalImages": []
           },
           {
-            "title": "3D Printed Guitar — From CAD to Strings",
-            "description": "The guitar I designed in CAD and 3D printed, shown next to its CAD model, then a pan along the strung neck to the headstock and tuning pegs.",
-            "imageUrl": "media/e2a9d4b6c715.mp4",
-            "imageBase64": null,
-            "additionalImages": []
-          },
-          {
             "title": "ATLAS 2.0 — Converging to a Human-Like Gait",
             "description": "After many iterations in NVIDIA Isaac Sim, ATLAS 2.0 finally converged to a coherent, human-like gait.\n\nPretty impressive to see a beast with this many degrees of freedom learn to coordinate everything into one holistic walking behavior.",
             "imageUrl": "media/d8efeb286ee2.mp4",
