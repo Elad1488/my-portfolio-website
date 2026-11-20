@@ -489,6 +489,7 @@ section {
 }
 
 .about-text p {
+    white-space: pre-line;
     font-size: clamp(1rem, 1.5vw, 1.1rem);
     line-height: 1.8;
     color: var(--text-dim);
@@ -595,9 +596,12 @@ section {
 
 .youtube-play-overlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.62);
+    top: auto;
+    left: auto;
+    right: 12px;
+    bottom: 12px;
+    transform: scale(0.5);
+    transform-origin: 100% 100%;
     opacity: 0.92;
     transition: opacity 0.3s ease, transform 0.35s var(--ease);
     pointer-events: none;
@@ -613,7 +617,7 @@ section {
 
 .project-thumbnail-link:hover .youtube-play-overlay {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.7);
+    transform: scale(0.58);
 }
 
 .project-thumbnail-link:hover .youtube-play-overlay svg path:first-child {
@@ -732,6 +736,13 @@ section {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
     gap: clamp(0.85rem, 1.6vw, 1.25rem);
+}
+
+/* The outer grid only stacks the named sections; each section has its own grid */
+#gallery-grid.gallery-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .gallery-section-display {
@@ -1476,11 +1487,13 @@ section {
     }
 
     .youtube-play-overlay {
-        transform: translate(-50%, -50%) scale(0.4);
+        right: 6px;
+        bottom: 6px;
+        transform: scale(0.34);
     }
 
     .project-thumbnail-link:hover .youtube-play-overlay {
-        transform: translate(-50%, -50%) scale(0.44);
+        transform: scale(0.38);
     }
 
     .gallery-overlay {
