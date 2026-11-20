@@ -816,9 +816,9 @@ function setupHeroGifSlideshow() {
         }
     }
 
-    // Images/GIFs stay 2.5 seconds; videos play to the end (max 30 seconds)
+    // Every slide (image, GIF or video) is shown for 3 seconds at most
     const IMAGE_DURATION = 2500;
-    const MAX_VIDEO_DURATION = 10000;
+    const MAX_VIDEO_DURATION = 3000;
     let currentIndex = 0;
     let timer = null;
 

@@ -359,13 +359,6 @@
         "name": "Hardware",
         "items": [
           {
-            "title": "Custom 7-inch Drone | Pixhawk, Raspberry Pi and Jetson Gimbal",
-            "description": "Quadcopter I built on a 7-inch frame, flown by a Pixhawk 2.4.8 flight controller that is commanded by a Raspberry Pi, and powered by a 6S (22 V) battery. A Jetson Nano runs a 2-axis gimbal carrying IR and EO cameras. The clip shows the build, the gimbal and Jetson setup, and a test flight of the drone.",
-            "imageUrl": "media/d3f6b82a9c41.mp4",
-            "imageBase64": null,
-            "additionalImages": []
-          },
-          {
             "title": "Gimbal Person Tracker + EO/IR Drone Tracking",
             "description": "A servo gimbal that finds me, locks a YOU box on my face and swings its head to keep me in frame (phone camera left, Jetson tracker view right, 3x speed), followed by the EO/IR tracker locking onto a drone in the thermal view with its motion box and track trail.",
             "imageUrl": "media/c4e8a1d7f203.mp4",
@@ -376,6 +369,13 @@
             "title": "Vulcan-Inspired Auto-Targeting System",
             "description": "Real-time visual target tracking with a PixyCam and a pair of pan-tilt servos for azimuth and elevation. The camera locks onto objects by color and keeps the target centered, while a second pair of servos mirrors its motion and drives a 3D-printed Vulcan-style turret, used here purely for illustration. A low-cost proof of concept for vision-based tracking coupled to a physical platform.",
             "imageUrl": "media/minigun-clip-gif.mp4",
+            "imageBase64": null,
+            "additionalImages": []
+          },
+          {
+            "title": "Custom 7-inch Drone | Pixhawk, Raspberry Pi and Jetson Gimbal",
+            "description": "Quadcopter I built on a 7-inch frame, flown by a Pixhawk 2.4.8 flight controller that is commanded by a Raspberry Pi, and powered by a 6S (22 V) battery. A Jetson Nano runs a 2-axis gimbal carrying IR and EO cameras. The clip shows the build, the gimbal and Jetson setup, and a test flight of the drone.",
+            "imageUrl": "media/d3f6b82a9c41.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
@@ -534,7 +534,15 @@
   },
   "heroSlideshow": [
     {
+      "imageUrl": "media/c4e8a1d7f203.mp4",
+      "imageBase64": null
+    },
+    {
       "imageUrl": "media/minigun-clip-gif.mp4",
+      "imageBase64": null
+    },
+    {
+      "imageUrl": "media/d3f6b82a9c41.mp4",
       "imageBase64": null
     },
     {
@@ -578,15 +586,7 @@
       "imageBase64": null
     },
     {
-      "imageUrl": "media/c4e8a1d7f203.mp4",
-      "imageBase64": null
-    },
-    {
       "imageUrl": "media/e2a9d4b6c715.mp4",
-      "imageBase64": null
-    },
-    {
-      "imageUrl": "media/d3f6b82a9c41.mp4",
       "imageBase64": null
     }
   ]
