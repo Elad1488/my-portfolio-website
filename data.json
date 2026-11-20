@@ -380,6 +380,18 @@
         ]
       },
       {
+        "name": "Hardware",
+        "items": [
+          {
+            "title": "Gimbal Person Tracker + EO/IR Drone Tracking",
+            "description": "A servo gimbal that finds me, locks a YOU box on my face and swings its head to keep me in frame (phone camera left, Jetson tracker view right, 3x speed), followed by the EO/IR tracker locking onto a drone in the thermal view with its motion box and track trail.",
+            "imageUrl": "media/c4e8a1d7f203.gif",
+            "imageBase64": null,
+            "additionalImages": []
+          }
+        ]
+      },
+      {
         "name": "Paintings",
         "items": [
           {
@@ -517,6 +529,10 @@
     },
     {
       "imageUrl": "media/b7f1c35a92e4.gif",
+      "imageBase64": null
+    },
+    {
+      "imageUrl": "media/c4e8a1d7f203.gif",
       "imageBase64": null
     }
   ]
