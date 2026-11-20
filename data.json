@@ -10,7 +10,7 @@
       "sourceUrl": ""
     },
     {
-      "name": "Wheeled SPOT Trajectory DEMO | NVIDIA Isaac Sim & Isaac Lab",
+      "name": "Wheeled Spot Trajectory Demo | NVIDIA Isaac Sim & Isaac Lab",
       "description": "In this video I demonstrate a wheeled Spot-style robot inspired by Boston Dynamics Spot that I trained using NVIDIA Isaac Sim and Isaac Lab to autonomously complete a route defined by five waypoints.\n\nThe robot uses reinforcement learning for low-level motion and stability, combined with a high-level navigation controller that sends target XY positions to the policy. By sequentially reaching each waypoint, the robot is able to follow a full path through the environment, demonstrating reliable goal-directed navigation.\n\nThis setup shows how learned locomotion policies can be combined with waypoint-based high-level control to produce structured, repeatable robot behavior suitable for real-world navigation tasks.\n\nAll training and evaluation were performed in NVIDIA Isaac Sim and Isaac Lab, using physics-based simulation and reinforcement learning to achieve stable and precise movement.",
       "thumbnail": "media/thumb_wheeled_spot_waypoints.jpg",
       "youtubeUrl": "xGYHr0L9lss",
@@ -28,7 +28,7 @@
       "sourceUrl": ""
     },
     {
-      "name": "Wheeled SPOT Trajectory DEMO | NVIDIA Isaac Sim & Isaac Lab",
+      "name": "Wheeled Spot Trajectory Demo | NVIDIA Isaac Sim & Isaac Lab",
       "description": "In this video I demonstrate a wheeled Spot-style robot inspired by Boston Dynamics Spot that I trained using NVIDIA Isaac Sim and Isaac Lab to autonomously complete a route defined by five waypoints.\n\nThe robot uses reinforcement learning for low-level motion and stability, combined with a high-level navigation controller that sends target XY positions to the policy. By sequentially reaching each waypoint, the robot is able to follow a full path through the environment, demonstrating reliable goal-directed navigation.\n\nThis setup shows how learned locomotion policies can be combined with waypoint-based high-level control to produce structured, repeatable robot behavior suitable for real-world navigation tasks.\n\nAll training and evaluation were performed in NVIDIA Isaac Sim and Isaac Lab, using physics-based simulation and reinforcement learning to achieve stable and precise movement.",
       "thumbnail": "media/thumb_wheeled_spot_trajectory.jpg",
       "youtubeUrl": "Odg2IOA6sdo",
@@ -73,7 +73,7 @@
       "sourceUrl": ""
     },
     {
-      "name": "Wheeled SPOT follows ball DEMO | Nvidia Isaac Sim & Isaac Lab",
+      "name": "Wheeled Spot follows ball Demo | NVIDIA Isaac Sim & Isaac Lab",
       "description": "In this video I demonstrate how I trained a Spot-style quadruped robot using NVIDIA Isaac Sim and Isaac Lab with a curriculum-based reinforcement learning pipeline.\n\nThe robot was trained progressively, starting from basic stability and balance, then learning to drive forward and backward, rotate in place, and finally respond to high-level navigation commands.\nOn top of the low-level locomotion policy, I added a high-level controller that commands the robot to move to target XY positions and chase a moving ball in real time.\n\nThis layered control approach allows the robot to combine learned locomotion with goal-directed navigation, enabling complex autonomous behaviors such as waypoint tracking and dynamic target pursuit.\n\nThe project is inspired by NVIDIA’s Isaac Lab examples and workflows, adapted and extended for a Spot-like robot.\n\n🎥 Reference material and original Isaac Lab demo:\n   • Isaac Lab: Custom Environment Training. A ...",
       "thumbnail": "media/thumb_spot_follows_ball.jpg",
       "youtubeUrl": "fRjI1ClDW6k",
@@ -494,16 +494,16 @@
     ]
   },
   "about": {
-    "text1": "I hold an M.Sc. in Aerospace Engineering and a B.A. in Economics, both from the Technion – Israel Institute of Technology.\nI have over a decade of experience in active missile defense.\nMy primary focus and passion is robotics, with emphasis on Reinforcement Learning, control theory, and locomotion algorithms for humanoid and legged robots.\nI work primarily through simulation-driven experimentation, bridging classical control with learning-based methods.",
+    "text1": "I hold an M.Sc. in Aerospace Engineering and a B.A. in Economics, both from the Technion – Israel Institute of Technology.\nI have more than a decade of experience in active missile defense.\nMy main focus and passion is robotics, particularly reinforcement learning, control theory, and locomotion algorithms for humanoid and legged robots.\nI work mostly through simulation-driven experimentation, bridging classical control with learning-based methods.",
     "text2": "Outside of work, my interests include basketball, drawing, music, and professional comedy."
   },
   "skills": [
-    "Nvidia Isaac Sim & Lab",
+    "NVIDIA Isaac Sim & Isaac Lab",
     "MATLAB & Simulink",
     "Python",
     "MuJoCo",
     "CAD",
-    "Microcontroller Tinkering",
+    "Microcontroller Prototyping",
     "3D Printing"
   ],
   "contact": {
