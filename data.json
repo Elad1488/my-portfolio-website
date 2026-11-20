@@ -261,6 +261,13 @@
         "name": "3D Prints",
         "items": [
           {
+            "title": "3D Printed Guitar — From CAD to Strings",
+            "description": "The guitar I designed in CAD and 3D printed, shown next to its CAD model, then a pan along the strung neck to the headstock and tuning pegs.",
+            "imageUrl": "media/e2a9d4b6c715.mp4",
+            "imageBase64": null,
+            "additionalImages": []
+          },
+          {
             "title": "Arachnid Warrior | Starship Troopers (1997)",
             "description": "Phil Tippett’s Arachnid Warrior, from Paul Verhoeven’s 1997 Starship Troopers. Nearly three decades later, it still feels iconic-a testament to the imagination, craft, and fearless vision of two artists to whom modern sci-fi owes a profound cultural debt.",
             "imageUrl": "media/starship-troopers.mp4",
