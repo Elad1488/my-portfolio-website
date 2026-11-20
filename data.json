@@ -274,13 +274,6 @@
                 "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-10-06%20at%2020.56.50.jpeg",
                 "imageBase64": null
               },
-          {
-            "title": "3D Printed Guitar — From CAD to Strings",
-            "description": "The guitar I designed in CAD and 3D printed, shown next to its CAD model, then a pan along the strung neck to the headstock and tuning pegs.",
-            "imageUrl": "media/e2a9d4b6c715.mp4",
-            "imageBase64": null,
-            "additionalImages": []
-          },
               {
                 "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-10-06%20at%2020.56.50%20(1).jpeg",
                 "imageBase64": null
@@ -315,6 +308,13 @@
             "title": "M41A Pulse Rifle from Aliens",
             "description": "",
             "imageUrl": "media/b7e9d679ea16.jpg",
+            "imageBase64": null,
+            "additionalImages": []
+          },
+          {
+            "title": "3D Printed Guitar — From CAD to Strings",
+            "description": "The guitar I designed in CAD and 3D printed, shown next to its CAD model, then a pan along the strung neck to the headstock and tuning pegs.",
+            "imageUrl": "media/e2a9d4b6c715.mp4",
             "imageBase64": null,
             "additionalImages": []
           },
