@@ -261,62 +261,6 @@
         "name": "3D Prints",
         "items": [
           {
-            "title": "Custom Planetary Gear design",
-            "description": "Custom Planetary Gear design for 1280 KV Brushless motor",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-05-21%20at%2013.18.07.jpeg",
-            "imageBase64": null,
-            "additionalImages": [
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Gear%20Gif.gif",
-                "imageBase64": null
-              },
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-05-21%20at%2013.18.08%20(1).jpeg",
-                "imageBase64": null
-              },
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsApp%20Image%202026-05-21%20at%2013.18.08.jpeg",
-                "imageBase64": null
-              }
-            ]
-          },
-          {
-            "title": "Belt Actuator for NEMA 17 Stepper Motor",
-            "description": "This belt-driven actuator design uses a standard NEMA 17 stepper motor (typically around 2.2 Nm torque) combined with a high-ratio belt reduction system to achieve an estimated output torque of nearly 30 Nm. The transmission provides roughly a 13–14:1 reduction ratio, significantly increasing torque while maintaining smooth, compact, and efficient operation.\n\nThe actuator was 3D printed and assembled based on the original belt-drive design by the How To Mechatronics YouTube channel, featured in the video “Cycloidal vs Belt vs Planetary - The Best 3D Printed Drive for Your Next Robotic Project?”.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/WhatsAppVideo2026-05-28at23.01.17-ezgif.com-video-to-gif-converter.gif",
-            "imageBase64": null,
-            "additionalImages": [
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Belt%20Actuator%201.jpeg",
-                "imageBase64": null
-              },
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Belt%20Actuator%202.jpeg",
-                "imageBase64": null
-              },
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Belt%20Actuator%203.jpeg",
-                "imageBase64": null
-              }
-            ]
-          },
-          {
-            "title": "The Sphere",
-            "description": "In collaboration with a friend who shares the same passion for engineering, we turned a concept sketched on paper into reality: a remotely controlled differential-drive spherical robot. What started as an idea evolved into a fully functional prototype through design, fabrication, electronics integration, and programming.\n\nOur next step is to equip the robot with an onboard camera and develop autonomous decision-making capabilities, enabling it to perceive its environment and operate independently without direct human control.",
-            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Sphere%20Bot%20GIF.gif",
-            "imageBase64": null,
-            "additionalImages": [
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Sphere%20images/WhatsApp%20Image%202026-05-05%20at%2022.18.23.jpeg",
-                "imageBase64": null
-              },
-              {
-                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Sphere%20images/WhatsApp%20Image%202026-05-16%20at%2013.55.46.jpeg",
-                "imageBase64": null
-              }
-            ]
-          },
-          {
             "title": "Arachnid Warrior | Starship Troopers (1997)",
             "description": "Phil Tippett’s Arachnid Warrior, from Paul Verhoeven’s 1997 Starship Troopers. Nearly three decades later, it still feels iconic-a testament to the imagination, craft, and fearless vision of two artists to whom modern sci-fi owes a profound cultural debt.",
             "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/StarShip%20Troopers.gif",
@@ -464,6 +408,22 @@
               },
               {
                 "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Belt%20Actuator%203.jpeg",
+                "imageBase64": null
+              }
+            ]
+          },
+          {
+            "title": "The Sphere",
+            "description": "In collaboration with a friend who shares the same passion for engineering, we turned a concept sketched on paper into reality: a remotely controlled differential-drive spherical robot. What started as an idea evolved into a fully functional prototype through design, fabrication, electronics integration, and programming.\n\nOur next step is to equip the robot with an onboard camera and develop autonomous decision-making capabilities, enabling it to perceive its environment and operate independently without direct human control.",
+            "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Sphere%20Bot%20GIF.gif",
+            "imageBase64": null,
+            "additionalImages": [
+              {
+                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Sphere%20images/WhatsApp%20Image%202026-05-05%20at%2022.18.23.jpeg",
+                "imageBase64": null
+              },
+              {
+                "imageUrl": "https://github.com/Elad1488/my-portfolio-website/blob/main/Sphere%20images/WhatsApp%20Image%202026-05-16%20at%2013.55.46.jpeg",
                 "imageBase64": null
               }
             ]
