@@ -1,6 +1,15 @@
 {
   "projects": [
     {
+      "name": "ATLAS 2.0 — Standing Up",
+      "description": "ATLAS 2.0, my humanoid robot, standing up. Watch the full video on YouTube.",
+      "thumbnail": "media/atlas2_standing_up_thumb.jpg",
+      "youtubeUrl": "XoPTrSlYg7k",
+      "technologies": [],
+      "projectUrl": "",
+      "sourceUrl": ""
+    },
+    {
       "name": "Wheeled SPOT Trajectory DEMO | NVIDIA Isaac Sim & Isaac Lab",
       "description": "In this video I demonstrate a wheeled Spot-style robot inspired by Boston Dynamics Spot that I trained using NVIDIA Isaac Sim and Isaac Lab to autonomously complete a route defined by five waypoints.\n\nThe robot uses reinforcement learning for low-level motion and stability, combined with a high-level navigation controller that sends target XY positions to the policy. By sequentially reaching each waypoint, the robot is able to follow a full path through the environment, demonstrating reliable goal-directed navigation.\n\nThis setup shows how learned locomotion policies can be combined with waypoint-based high-level control to produce structured, repeatable robot behavior suitable for real-world navigation tasks.\n\nAll training and evaluation were performed in NVIDIA Isaac Sim and Isaac Lab, using physics-based simulation and reinforcement learning to achieve stable and precise movement.",
       "thumbnail": "https://www.youtube.com/watch?v=xGYHr0L9lss&feature=youtu.be",
