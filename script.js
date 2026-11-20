@@ -37,17 +37,17 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const navbar = document.querySelector('.navbar');
 let lastScroll = 0;
 
-window.addEventListener('scroll', () => {
+function updateNavbarShadow() {
     const currentScroll = window.pageYOffset;
-    
+
     if (currentScroll > 100) {
-        navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+        navbar.style.boxShadow = '0 8px 24px -12px rgba(0, 0, 0, 0.6)';
     } else {
         navbar.style.boxShadow = 'none';
     }
-    
+
     lastScroll = currentScroll;
-});
+}
 
 // Active Navigation Link
 const sections = document.querySelectorAll('section[id]');
@@ -71,7 +71,17 @@ function activateNavLink() {
     });
 }
 
-window.addEventListener('scroll', activateNavLink);
+// One scroll handler, at most once per frame, passive so it never blocks scrolling
+let scrollTicking = false;
+window.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(() => {
+        updateNavbarShadow();
+        activateNavLink();
+        scrollTicking = false;
+    });
+}, { passive: true });
 
 // Form Submission
 // Contact form handling with Web3Forms API
@@ -219,11 +229,7 @@ skillItems.forEach((item, index) => {
     observer.observe(item);
 });
 
-// Add active class to nav links on page load
-window.addEventListener('load', () => {
-    activateNavLink();
-    loadDynamicContent();
-});
+// (Content loading starts at the end of this file, as soon as the DOM is ready.)
 
 // ========== DYNAMIC CONTENT LOADING ==========
 
@@ -462,7 +468,7 @@ function createProjectCard(project) {
             const safeVideoId = videoIdForLink || project.youtubeUrl;
             mediaContent = `
                 <a href="https://www.youtube.com/watch?v=${safeVideoId}" target="_blank" class="project-thumbnail-link">
-                    <img src="${thumbnailUrl}" alt="${project.name}" onerror="handleThumbnailError(this, '${safeVideoId}')">
+                    <img src="${thumbnailUrl}" alt="${project.name}" loading="lazy" decoding="async" onerror="handleThumbnailError(this, '${safeVideoId}')">
                     <div class="youtube-play-overlay">
                         <svg width="68" height="48" viewBox="0 0 68 48">
                             <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path>
@@ -474,7 +480,7 @@ function createProjectCard(project) {
             `;
         } else {
             mediaContent = `
-                <img src="${thumbnailUrl}" alt="${project.name}" onerror="handleThumbnailError(this, '')">
+                <img src="${thumbnailUrl}" alt="${project.name}" loading="lazy" decoding="async" onerror="handleThumbnailError(this, '')">
                 <div class="project-placeholder" style="display: none;">${project.name}</div>
             `;
         }
@@ -672,7 +678,7 @@ function setupHeroGifSlideshow() {
                     let mainImage = item.imageUrl || item.imageBase64 || '';
                     mainImage = convertGitHubUrl(mainImage);
                     if (mainImage) {
-                        if (isGif(mainImage)) {
+                        if (isGif(mainImage) || isHeroVideo(mainImage)) {
                             if (isSimulation) {
                                 simulationImages.push(mainImage);
                             } else if (isPrinting) {
@@ -689,7 +695,7 @@ function setupHeroGifSlideshow() {
                             let imgSrc = additionalImg.imageUrl || additionalImg.imageBase64 || '';
                             imgSrc = convertGitHubUrl(imgSrc);
                             if (imgSrc) {
-                                if (isGif(imgSrc)) {
+                                if (isGif(imgSrc) || isHeroVideo(imgSrc)) {
                                     if (isSimulation) {
                                         simulationImages.push(imgSrc);
                                     } else if (isPrinting) {
@@ -779,29 +785,40 @@ function setupHeroGifSlideshow() {
     console.log(`Found ${gifUrls.length} images for hero slideshow:`, gifUrls);
     
     // Create an <img> or <video> element for each slide
-    const slides = gifUrls.map((url, index) => {
+    // Each file only once, and only the current + next slide are ever downloaded
+    const slideUrls = Array.from(new Set(gifUrls));
+    const slides = slideUrls.map((url, index) => {
         let el;
         if (isHeroVideo(url)) {
             el = document.createElement('video');
-            el.src = url;
             el.muted = true; // required for autoplay
             el.setAttribute('muted', '');
             el.playsInline = true;
             el.setAttribute('playsinline', '');
-            el.preload = index === 0 ? 'auto' : 'metadata';
+            el.preload = 'none';
+            el.disablePictureInPicture = true;
+            if (/^media\//.test(url)) el.poster = url.replace(/\.(mp4|webm|m4v)(\?.*)?$/i, '.jpg');
         } else {
             el = document.createElement('img');
-            el.src = url;
             el.alt = `Hero background image ${index + 1}`;
-            el.loading = 'eager'; // Load immediately for background
+            el.decoding = 'async';
         }
+        el.dataset.src = url;
         slideshowContainer.appendChild(el);
         return el;
     });
 
+    // Start downloading a slide only when it is about to be shown
+    function ensureLoaded(slide) {
+        if (!slide.getAttribute('src') && slide.dataset.src) {
+            if (slide.tagName === 'VIDEO') slide.preload = 'auto';
+            slide.src = slide.dataset.src;
+        }
+    }
+
     // Images/GIFs stay 2.5 seconds; videos play to the end (max 30 seconds)
     const IMAGE_DURATION = 2500;
-    const MAX_VIDEO_DURATION = 30000;
+    const MAX_VIDEO_DURATION = 10000;
     let currentIndex = 0;
     let timer = null;
 
@@ -812,7 +829,10 @@ function setupHeroGifSlideshow() {
 
         currentIndex = index;
         const slide = slides[currentIndex];
+        ensureLoaded(slide);
         slide.classList.add('active');
+        // Warm up the next slide in the background so the cross-fade is instant
+        if (slides.length > 1) ensureLoaded(slides[(currentIndex + 1) % slides.length]);
         clearTimeout(timer);
         if (slides.length === 1 && slide.tagName === 'VIDEO') slide.loop = true;
 
@@ -919,6 +939,19 @@ function loadGallery() {
     }, 100);
 }
 
+// Gallery videos download and play only while they are on (or near) the screen
+const galleryVideoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        const v = entry.target;
+        if (entry.isIntersecting) {
+            if (!v.getAttribute('src') && v.dataset.src) v.src = v.dataset.src;
+            v.play().catch(() => {});
+        } else {
+            v.pause();
+        }
+    });
+}, { rootMargin: '250px 0px' });
+
 function createGalleryItem(item) {
     const div = document.createElement('div');
     div.className = 'gallery-item';
@@ -985,8 +1018,8 @@ function createGalleryItem(item) {
     video.loop = true;
     video.playsInline = true;
     video.setAttribute('playsinline', '');
-    video.autoplay = true;
-    video.preload = 'metadata';
+    video.preload = 'none';
+    video.disablePictureInPicture = true;
 
     // Show one gallery source (image/GIF or MP4/WebM) in the thumbnail
     function setThumb(src) {
@@ -994,8 +1027,16 @@ function createGalleryItem(item) {
             img.style.display = 'none';
             img.removeAttribute('src');
             video.style.display = '';
-            if (video.getAttribute('src') !== src) video.src = src;
-            video.play().catch(() => {});
+            video.dataset.src = src;
+            if (/^media\//.test(src)) video.poster = src.replace(/\.(mp4|webm|m4v)(\?.*)?$/i, '.jpg');
+            if (video.getAttribute('src')) {
+                // Already loaded once: swap straight away
+                if (video.getAttribute('src') !== src) video.src = src;
+                video.play().catch(() => {});
+            } else {
+                // Load + play only when the tile is near the viewport
+                galleryVideoObserver.observe(video);
+            }
         } else {
             video.pause();
             video.removeAttribute('src');
@@ -1526,3 +1567,14 @@ function typeWriter(element, text, speed = 100) {
 //     const originalText = heroTitle.textContent;
 //     typeWriter(heroTitle, originalText, 50);
 // }
+
+// Start as soon as the DOM is ready; do not wait for every image, GIF and font to finish
+function startSite() {
+    activateNavLink();
+    loadDynamicContent();
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startSite);
+} else {
+    startSite();
+}
